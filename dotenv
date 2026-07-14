@@ -1,0 +1,8 @@
+
+SOURCE_ORACLEDB_USER=<source user>
+SOURCE_ORACLEDB_PASSWORD=<source password>
+SOURCE_ORACLEDB_CONNECTIONSTRING=<source connection string>
+
+TARGET_ORACLEDB_USER=<target user>
+TARGET_ORACLEDB_PASSWORD=<target password>
+TARGET_ORACLEDB_CONNECTIONSTRING=<target connection string>

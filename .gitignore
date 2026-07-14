@@ -1,0 +1,6 @@
+
+# Keep environment variables out of version control
+.env
+
+# Ignore directories
+node_modules
