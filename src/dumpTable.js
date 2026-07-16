@@ -13,11 +13,12 @@ oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
 const [,, rawSourceSchema, rawTargetSchema, manifestFile, truncateFlag] = process.argv;
 if (!rawSourceSchema || !rawTargetSchema || !manifestFile) {
-  console.error(`Usage: 
-      node src/dumpTable.js <source schema> <target schema> <files.txt> [truncate]
+  console.error(`
+  Usage: 
+      node src/copyTable.js <source schema> <target schema> <files.txt> [truncate]
       
-      Example: 
-        node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate`);
+  Example: 
+      node src/copyTable.js DCDEVDTA DCUATDTA files.txt truncate`);
   process.exit(1);
 }
 
@@ -206,5 +207,5 @@ function formatValue(val) {
 })();
 
 /*
-   node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate
+   node src/copyTable.js DCDEVDTA DCUATDTA files.txt truncate
 */

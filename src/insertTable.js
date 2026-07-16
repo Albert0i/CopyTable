@@ -55,9 +55,9 @@ function formatDuration(ms) {
 async function main() {
   const sourceFolder = process.argv[2];
   if (!sourceFolder) {
-    console.error(`Usage: 
-      node 
-        src/insertTable.js <sourceFolder>
+    console.error(`
+      Usage: 
+        node src/insertTable.js <sourceFolder>
 
       Example: 
         node src/insertTable.js H:\\\\UAT`);
