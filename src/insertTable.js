@@ -99,6 +99,12 @@ async function main() {
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim(); // keep semicolon intact
+
+        // Skip SQL comment lines
+        if (line.startsWith("--")) {
+          continue;
+        }
+        
         try {
           // Strip semicolon only for execution, not for logging
           const cleanLine = line.replace(/;$/, "");
