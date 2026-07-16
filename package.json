@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node src/testConn.js",
     "dump": "node src/dumpTable.js",
-    "insert": "node src/insertTable.js"
+    "insert": "node src/insertTable.js",
+    "copy": "node src/copyTable.js"
   },
   "keywords": [],
   "author": "",
