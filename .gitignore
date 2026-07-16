@@ -4,3 +4,7 @@
 
 # Ignore directories
 node_modules
+
+data
+logs 
+files.txt

@@ -142,7 +142,15 @@ function formatValue(val) {
         if (result.rows.length === 0) break;
 
         for (const row of result.rows) {
-          const vals = commonCols.map(c => formatValue(row[c])).join(', ');
+          //const vals = commonCols.map(c => formatValue(row[c])).join(', ');
+          const vals = commonCols.map(c => {
+                  let v = formatValue(row[c]);
+                  // 🔧 sanitize embedded linebreaks
+                  if (typeof v === 'string') {
+                    v = v.replace(/\r?\n/g, ' '); // replace newline with space
+                  }
+                  return v;
+                }).join(', ');
           const insertSQL = `INSERT INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${vals});\n`;
           writeStream.write(insertSQL);
           rowCount++;
