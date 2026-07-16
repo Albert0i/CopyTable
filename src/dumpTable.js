@@ -101,6 +101,11 @@ function formatValue(val) {
   const startTime = new Date();
 
   for (const table of tables) {
+      // 🔧 Skip SQL comment lines and blank lines
+    if (table.length === 0 || table.startsWith("--")) {
+      continue;
+    }
+
     filesProcessed++;
     console.log(`\n=== Dumping ${sourceSchema}.${table} ===`);
 

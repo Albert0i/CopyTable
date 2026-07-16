@@ -20,7 +20,6 @@ INSERT INTO DCDEVDTA.CUSTOMERS VALUES (4, 'David Ho',   'david@example.com', '85
 INSERT INTO DCDEVDTA.CUSTOMERS VALUES (5, 'Eva Lei',    'eva@example.com',   '853-999999', 'Macau Tower Road', DATE '1980-12-31', 'I');
 ```
 
----
 
 ### 📂 Target schema: `DCUATDTA.CUSTOMERS`
 ```
@@ -44,7 +43,6 @@ INSERT INTO DCUATDTA.CUSTOMERS VALUES (104, 'Fiona Wong', 'fiona@example.com',  
 INSERT INTO DCUATDTA.CUSTOMERS VALUES (105, 'George Lam', 'george@example.com',  '853-555555', 'Taipa', 19801231, 'I', DATE '2024-05-05');
 ```
 
----
 
 ### 🔍 Intersection vs. Differences
 - **Shared fields (same name & type):**  
@@ -59,3 +57,19 @@ INSERT INTO DCUATDTA.CUSTOMERS VALUES (105, 'George Lam', 'george@example.com', 
   - `BIRTHDATE` (DATE) vs. `BIRTHDAY` (DECIMAL(8,0))  
   - `CREATED_AT` (only in target)  
 
+```
+node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate
+```
+
+```
+-- Dump for DCDEVDTA.CUSTOMERS at 2026-07-16T08:09:18.455Z
+TRUNCATE TABLE DCUATDTA.CUSTOMERS;
+
+INSERT INTO DCUATDTA.CUSTOMERS (NAME, PHONE, STATUS) VALUES ('Alice Chan', '853-123456', 'A');
+INSERT INTO DCUATDTA.CUSTOMERS (NAME, PHONE, STATUS) VALUES ('Bob Wong', '853-654321', 'I');
+INSERT INTO DCUATDTA.CUSTOMERS (NAME, PHONE, STATUS) VALUES ('Cathy Lam', '853-777777', 'A');
+INSERT INTO DCUATDTA.CUSTOMERS (NAME, PHONE, STATUS) VALUES ('David Ho', '853-888888', 'A');
+INSERT INTO DCUATDTA.CUSTOMERS (NAME, PHONE, STATUS) VALUES ('Eva Lei', '853-999999', 'I');
+
+-- Records dumped: 5, Lines written: 9
+```
