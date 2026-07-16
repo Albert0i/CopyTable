@@ -15,10 +15,10 @@ const [,, rawSourceSchema, rawTargetSchema, manifestFile, truncateFlag] = proces
 if (!rawSourceSchema || !rawTargetSchema || !manifestFile) {
   console.error(`
   Usage: 
-      node src/copyTable.js <source schema> <target schema> <files.txt> [truncate]
+      node src/dumpTable.js <source schema> <target schema> <files.txt> [truncate]
       
   Example: 
-      node src/copyTable.js DCDEVDTA DCUATDTA files.txt truncate`);
+      node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate`);
   process.exit(1);
 }
 

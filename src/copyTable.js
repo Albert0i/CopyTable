@@ -17,7 +17,7 @@ if (!rawSourceSchema || !rawTargetSchema || !manifestFile) {
       node src/copyTable.js <source schema> <target schema> <files.txt> [truncate]
 
     Example: 
-        node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate`);
+        node src/copyTable.js DCDEVDTA DCUATDTA files.txt truncate`);
   process.exit(1);
 }
 
