@@ -60,11 +60,7 @@ async function main() {
         src/insertTable.js <sourceFolder>
 
       Example: 
-        node src/insertTable.js H:\\\\UAT
-
-      Note: 
-        Default is ./data folder.
-      `);
+        node src/insertTable.js H:\\\\UAT`);
 
     process.exit(1);
   }
