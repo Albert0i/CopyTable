@@ -7,4 +7,4 @@ node_modules
 
 data
 logs 
-files.txt
+*.txt
