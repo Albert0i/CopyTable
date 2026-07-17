@@ -1,5 +1,6 @@
+### 
 
-### 📂 Source schema: `DCDEVDTA.CUSTOMERS`
+#### 📂 Source schema: `DCDEVDTA.CUSTOMERS`
 ```
 CREATE TABLE DCDEVDTA.CUSTOMERS (
     CUST_ID     INTEGER       NOT NULL,
@@ -21,7 +22,7 @@ INSERT INTO DCDEVDTA.CUSTOMERS VALUES (5, 'Eva Lei',    'eva@example.com',   '85
 ```
 
 
-### 📂 Target schema: `DCUATDTA.CUSTOMERS`
+#### 📂 Target schema: `DCUATDTA.CUSTOMERS`
 ```
 CREATE TABLE DCUATDTA.CUSTOMERS (
     CUSTOMER_ID INTEGER       NOT NULL,
@@ -44,7 +45,7 @@ INSERT INTO DCUATDTA.CUSTOMERS VALUES (105, 'George Lam', 'george@example.com', 
 ```
 
 
-### 🔍 Intersection vs. Differences
+#### 🔍 Intersection vs. Differences
 - **Shared fields (same name & type):**  
   - `NAME`  
   - `PHONE`  
@@ -57,10 +58,17 @@ INSERT INTO DCUATDTA.CUSTOMERS VALUES (105, 'George Lam', 'george@example.com', 
   - `BIRTHDATE` (DATE) vs. `BIRTHDAY` (DECIMAL(8,0))  
   - `CREATED_AT` (only in target)  
 
+`files.txt`
+```
+CUSTOMERS
+```
+
+Run with: 
 ```
 node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate
 ```
 
+CUSTOMERS_20260716165133.sql
 ```
 -- Dump for DCDEVDTA.CUSTOMERS at 2026-07-16T08:09:18.455Z
 TRUNCATE TABLE DCUATDTA.CUSTOMERS;
@@ -73,3 +81,5 @@ INSERT INTO DCUATDTA.CUSTOMERS (NAME, PHONE, STATUS) VALUES ('Eva Lei', '853-999
 
 -- Records dumped: 5, Lines written: 9
 ```
+
+### EOF (2026/07/17)
