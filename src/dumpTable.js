@@ -68,10 +68,15 @@ let failureCount = 0;
 
 function normalizeColumns(rows) {
   return rows
-    .map(r => ({
-      column_name: r.COLUMN_NAME.trim().toUpperCase(),
-      data_type: r.DATA_TYPE.trim().toUpperCase()
-    }))
+    .map(r => {
+      let dt = r.DATA_TYPE.trim().toUpperCase();
+      // Treat CHAR and VARCHAR2 as the same
+      if (dt === 'CHAR') dt = 'VARCHAR2';
+      return {
+        column_name: r.COLUMN_NAME.trim().toUpperCase(),
+        data_type: dt
+      };
+    })
     .filter(c => !c.column_name.startsWith("OGG_"));
 }
 
