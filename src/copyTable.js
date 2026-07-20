@@ -212,5 +212,5 @@ function formatValue(val) {
 })();
 
 /*
-   node src/copyTable.js DCDEVDTA DCUATDTA files.txt truncate
+   node src/copyTable.js DCDEVDTA DCUATDTA csr.txt truncate
 */
