@@ -70,6 +70,7 @@ let filesProcessed = 0;
 let successCount = 0;
 let failureCount = 0;
 
+// Normalize Oracle column metadata, unifying CHAR/VARCHAR2 and excluding OGG_ columns
 function normalizeColumns(rows) {
   return rows
     .map(r => {
@@ -84,6 +85,7 @@ function normalizeColumns(rows) {
     .filter(c => !c.column_name.startsWith("OGG_"));
 }
 
+// Retrieve column metadata for a given schema/table and types
 async function getColumns(runner, schema, table) {
   const sql = `
     SELECT column_name, data_type
@@ -96,6 +98,7 @@ async function getColumns(runner, schema, table) {
   return result.success ? normalizeColumns(result.rows) : [];
 }
 
+// Convert JS values into SQL-safe literals (NULL, numbers, dates, strings)
 function formatValue(val) {
   if (val === null || val === undefined) return 'NULL';
   if (typeof val === 'number') return val.toString();
@@ -107,6 +110,9 @@ function formatValue(val) {
   return `'${s.replace(/\r?\n/g, ' ')}'`; // sanitize embedded linebreaks
 }
 
+/*
+   main 
+*/
 (async () => {
   const startTime = new Date();
 
@@ -119,7 +125,10 @@ function formatValue(val) {
       const srcCols = await getColumns(sourceRunner, sourceSchema, table);
       const tgtCols = await getColumns(targetRunner, targetSchema, table);
 
+      // Create a Map of target columns keyed by column_name with data_type as value
       const tgtMap = new Map(tgtCols.map(c => [c.column_name, c.data_type]));
+
+      // Build list of source columns that exist in target with identical data types
       const commonCols = srcCols.filter(c =>
         tgtMap.has(c.column_name) && tgtMap.get(c.column_name) === c.data_type
       ).map(c => c.column_name);
@@ -201,3 +210,7 @@ function formatValue(val) {
     console.log(`⚠️ Some copies failed. Please check the log file: ${logFile}`);
   }
 })();
+
+/*
+   node src/copyTable.js DCDEVDTA DCUATDTA files.txt truncate
+*/
