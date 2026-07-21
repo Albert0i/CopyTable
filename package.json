@@ -8,13 +8,15 @@
     "dump": "node src/dumpTable.js",
     "insert": "node src/insertTable.js",
     "copy": "node src/copyTable.js",
-    "replace": "node src/schemaReplace.js"
+    "replace": "node src/schemaReplace.js",
+    "sql": "sqlite3 -init init.sql ./data/hash_tracker.db"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "better-sqlite3": "^12.11.1",
     "dotenv": "^17.4.2",
     "fs-extra": "^11.3.6",
     "oracledb": "^7.0.0"
