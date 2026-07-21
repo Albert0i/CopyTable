@@ -243,46 +243,42 @@ CREATE INDEX IF NOT EXISTS idx_hash_tracker_hash
 
 */
 /*
-1. Check row counts per table
-SELECT schema_name, schema_type, table_name, COUNT(*) AS row_count
-FROM   hash_tracker
-GROUP BY schema_name, schema_type, table_name
-ORDER BY table_name, schema_type;
-
-2. Compare row counts per table
-
+-- Per-table row count comparison
 SELECT table_name,
        MAX(CASE WHEN schema_type='SOURCE' THEN cnt END) AS source_rows,
        MAX(CASE WHEN schema_type='TARGET' THEN cnt END) AS target_rows
 FROM (
-  SELECT table_name, schema_type, COUNT(*) AS cnt
-  FROM   hash_tracker
-  GROUP BY table_name, schema_type
+    SELECT table_name, schema_type, COUNT(*) AS cnt
+    FROM hash_tracker
+    GROUP BY table_name, schema_type
 ) t
 GROUP BY table_name
 HAVING source_rows != target_rows;
 
-3. 
-
-SELECT table_name,
-       SUM(CASE WHEN schema_type='SOURCE' THEN 1 ELSE 0 END) AS source_rows,
-       SUM(CASE WHEN schema_type='TARGET' THEN 1 ELSE 0 END) AS target_rows,
-       SUM(CASE WHEN schema_type='SOURCE' THEN 1 ELSE 0 END)
-         - SUM(CASE WHEN schema_type='TARGET' THEN 1 ELSE 0 END) AS row_diff
-FROM hash_tracker
+-- Per-table hash distribution comparison Summary
+SELECT table_name
+FROM (
+    SELECT table_name,
+           hash_value,
+           SUM(CASE WHEN schema_type='SOURCE' THEN 1 ELSE 0 END) AS source_count,
+           SUM(CASE WHEN schema_type='TARGET' THEN 1 ELSE 0 END) AS target_count
+    FROM   hash_tracker
+    GROUP BY table_name, hash_value
+    HAVING source_count != target_count
+) sub
 GROUP BY table_name
-HAVING row_diff != 0
-   OR EXISTS (
-       SELECT 1
-       FROM hash_tracker h2
-       WHERE h2.table_name = hash_tracker.table_name
-       GROUP BY h2.hash_value
-       HAVING SUM(CASE WHEN h2.schema_type='SOURCE' THEN 1 ELSE 0 END) !=
-              SUM(CASE WHEN h2.schema_type='TARGET' THEN 1 ELSE 0 END)
-   )
 ORDER BY table_name;
 
+-- Per-table hash distribution comparison
+SELECT table_name,
+       hash_value,
+       SUM(CASE WHEN schema_type='SOURCE' THEN 1 ELSE 0 END) AS source_count,
+       SUM(CASE WHEN schema_type='TARGET' THEN 1 ELSE 0 END) AS target_count
+FROM   hash_tracker
+GROUP BY table_name, hash_value
+HAVING source_count != target_count
+ORDER BY table_name, hash_value;
 */
 /*
-   node src/buildHashes.js DCDEVDTA DCUATDTA csr.txt truncate
+   node src/buildHashes.js DCDEVDTA DCUATDTA csr.txt
 */
