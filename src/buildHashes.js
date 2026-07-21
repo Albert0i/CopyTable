@@ -178,7 +178,7 @@ function formatDuration(ms) {
     }
   }
 
-  const endTime = new Date();  
+  const endTime = new Date();
   const duration = formatDuration(endTime - startTime);
 
   console.log("\n=== SUMMARY ===");
@@ -186,7 +186,7 @@ function formatDuration(ms) {
   console.log(`Target hashes: ${targetCount}`);
   console.log(`Start time: ${startTime.toLocaleString('en-GB', { timeZone: 'Asia/Macau', hour12: false })}`);
   console.log(`End time:   ${endTime.toLocaleString('en-GB', { timeZone: 'Asia/Macau', hour12: false })}`);
-  console.log(`Duration:   ${Math.floor(durationMs/1000)}s`);
+  console.log(`Duration:   ${duration}`);
 })();
 
 /*
