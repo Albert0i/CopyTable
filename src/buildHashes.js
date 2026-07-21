@@ -77,8 +77,40 @@ async function getColumns(runner, schema, table) {
 }
 
 // Compute hash from row values
+// function computeHash(row, commonCols) {
+//   const vals = commonCols.map(c => row[c] ?? 'NULL');
+//   return crypto.createHash('md5')
+//     .update(vals.join('|'))
+//     .digest('hex');
+// }
+// Normalize values for hashing (no SQL sanitization)
+function normalizeForHash(val) {
+  if (val === null || val === undefined) return '';
+  if (typeof val === 'number') return val.toString();
+  if (val instanceof Date) return val.toISOString();
+  return String(val); // no trim, no forced space
+}
+
+// Compute hash from row values
+// function computeHash(row, commonCols) {
+//   const vals = commonCols.map(c => normalizeForHash(row[c]));
+//   return crypto.createHash('md5')
+//     .update(vals.join('|'))
+//     .digest('hex');
+// }
+// Convert JS values into SQL-safe literals (NULL, numbers, dates, strings)
+function formatValue(val) {
+  if (val === null || val === undefined) return 'NULL';
+  if (typeof val === 'number') return val.toString();
+  if (val instanceof Date) {
+    return `TO_DATE('${val.toISOString().slice(0,19)}','YYYY-MM-DD"T"HH24:MI:SS')`;
+  }
+  let s = String(val).trim().replace(/'/g, "''");
+  if (s === '') s = ' ';
+  return `'${s.replace(/\r?\n/g, ' ')}'`; // sanitize embedded linebreaks
+}
 function computeHash(row, commonCols) {
-  const vals = commonCols.map(c => row[c] ?? 'NULL');
+  const vals = commonCols.map(c => formatValue(row[c]));
   return crypto.createHash('md5')
     .update(vals.join('|'))
     .digest('hex');
@@ -208,6 +240,47 @@ CREATE INDEX IF NOT EXISTS idx_hash_tracker_schema_table
 
 CREATE INDEX IF NOT EXISTS idx_hash_tracker_hash
   ON hash_tracker(hash_value);
+
+*/
+/*
+1. Check row counts per table
+SELECT schema_name, schema_type, table_name, COUNT(*) AS row_count
+FROM   hash_tracker
+GROUP BY schema_name, schema_type, table_name
+ORDER BY table_name, schema_type;
+
+2. Compare row counts per table
+
+SELECT table_name,
+       MAX(CASE WHEN schema_type='SOURCE' THEN cnt END) AS source_rows,
+       MAX(CASE WHEN schema_type='TARGET' THEN cnt END) AS target_rows
+FROM (
+  SELECT table_name, schema_type, COUNT(*) AS cnt
+  FROM   hash_tracker
+  GROUP BY table_name, schema_type
+) t
+GROUP BY table_name
+HAVING source_rows != target_rows;
+
+3. 
+
+SELECT table_name,
+       SUM(CASE WHEN schema_type='SOURCE' THEN 1 ELSE 0 END) AS source_rows,
+       SUM(CASE WHEN schema_type='TARGET' THEN 1 ELSE 0 END) AS target_rows,
+       SUM(CASE WHEN schema_type='SOURCE' THEN 1 ELSE 0 END)
+         - SUM(CASE WHEN schema_type='TARGET' THEN 1 ELSE 0 END) AS row_diff
+FROM hash_tracker
+GROUP BY table_name
+HAVING row_diff != 0
+   OR EXISTS (
+       SELECT 1
+       FROM hash_tracker h2
+       WHERE h2.table_name = hash_tracker.table_name
+       GROUP BY h2.hash_value
+       HAVING SUM(CASE WHEN h2.schema_type='SOURCE' THEN 1 ELSE 0 END) !=
+              SUM(CASE WHEN h2.schema_type='TARGET' THEN 1 ELSE 0 END)
+   )
+ORDER BY table_name;
 
 */
 /*
