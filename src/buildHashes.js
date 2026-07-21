@@ -84,12 +84,12 @@ async function getColumns(runner, schema, table) {
 //     .digest('hex');
 // }
 // Normalize values for hashing (no SQL sanitization)
-function normalizeForHash(val) {
-  if (val === null || val === undefined) return '';
-  if (typeof val === 'number') return val.toString();
-  if (val instanceof Date) return val.toISOString();
-  return String(val); // no trim, no forced space
-}
+// function normalizeForHash(val) {
+//   if (val === null || val === undefined) return '';
+//   if (typeof val === 'number') return val.toString();
+//   if (val instanceof Date) return val.toISOString();
+//   return String(val); // no trim, no forced space
+// }
 
 // Compute hash from row values
 // function computeHash(row, commonCols) {
