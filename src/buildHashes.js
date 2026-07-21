@@ -45,6 +45,8 @@ const targetRunner = createRunner(targetConfig);
 
 // Truncate hash_tracker table
 db.prepare('DELETE FROM hash_tracker').run();
+// Reset id to restart at 1 each run:
+db.prepare("DELETE FROM sqlite_sequence WHERE name='hash_tracker'").run();
 
 let sourceCount = 0;
 let targetCount = 0;
