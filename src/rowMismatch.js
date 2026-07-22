@@ -71,7 +71,7 @@ const mismatches = db.prepare(mismatchedHashesQuery).all();
     if (m.source_count !== 0) {
       // Get full detail from hash_tracker    
       const details = db.prepare(
-        `SELECT schema_name, schema_type, table_name, common_columns, row_seq FROM hash_tracker WHERE table_name=? AND hash_value=?`
+        `SELECT schema_name, schema_type, table_name, common_columns, row_seq FROM hash_tracker WHERE table_name=? AND hash_value=? ORDER BY schema_name, table_name`
       ).all(m.table_name, m.hash_value);
 
       for (const detail of details) {
@@ -103,7 +103,7 @@ const mismatches = db.prepare(mismatchedHashesQuery).all();
     if (m.target_count !== 0) {
       // Get full detail from hash_tracker    
       const details = db.prepare(
-        `SELECT schema_name, schema_type, table_name, common_columns, row_seq FROM hash_tracker WHERE table_name=? AND hash_value=?`
+        `SELECT schema_name, schema_type, table_name, common_columns, row_seq FROM hash_tracker WHERE table_name=? AND hash_value=? ORDER BY schema_name, table_name`
       ).all(m.table_name, m.hash_value);
 
       for (const detail of details) {
