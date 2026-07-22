@@ -1,7 +1,6 @@
 /**
  * verifyCopy.js
  */
-// verifyCopy.js
 import db from './db.js';   // <-- use your db.js wrapper
 
 // 1. Per-table row count comparison
