@@ -69,11 +69,10 @@ const mismatches = db.prepare(mismatchedHashesQuery).all();
   for (const m of mismatches) {
     // Source 
     if (m.source_count !== 0) {
-          // Get full detail from hash_tracker    
+      // Get full detail from hash_tracker    
       const details = db.prepare(
         `SELECT schema_name, schema_type, table_name, common_columns, row_seq FROM hash_tracker WHERE table_name=? AND hash_value=?`
       ).all(m.table_name, m.hash_value);
-
 
       for (const detail of details) {
         // Always use sourceRunner as requested
@@ -99,13 +98,38 @@ const mismatches = db.prepare(mismatchedHashesQuery).all();
         logStream.write(`-- Mismatch hash_value=${m.hash_value} from ${detail.schema_name}.${detail.table_name}\n`);
         logStream.write(`${insertSQL}\n\n`);
       }
-
-
-
     }
     // Target
     if (m.target_count !== 0) {
+      // Get full detail from hash_tracker    
+      const details = db.prepare(
+        `SELECT schema_name, schema_type, table_name, common_columns, row_seq FROM hash_tracker WHERE table_name=? AND hash_value=?`
+      ).all(m.table_name, m.hash_value);
 
+      for (const detail of details) {
+        // Always use targetRunner as requested
+        const selectSQL = `SELECT ${detail.common_columns}
+                          FROM ${detail.schema_name}.${detail.table_name}
+                          OFFSET ${detail.row_seq - 1} ROWS FETCH FIRST 1 ROWS ONLY`;
+
+        // Run SELECT
+        const result = await targetRunner.runSelectSQL(selectSQL);
+        if (!result.success || result.rows.length === 0) {
+          logStream.write(`-- Failed to fetch row for hash_value=${detail.hash_value} (${result.message})\n`);
+          continue;
+        }
+
+        // Each row is an object → extract values
+        const rowObj = result.rows[0];
+        const values = Object.values(rowObj).map(formatValue).join(',');
+
+        // Build INSERT
+        const insertSQL = `INSERT INTO ${detail.schema_name}.${detail.table_name} (${detail.common_columns}) VALUES (${values});`;
+
+        // Log with comment
+        logStream.write(`-- Mismatch hash_value=${m.hash_value} from ${detail.schema_name}.${detail.table_name}\n`);
+        logStream.write(`${insertSQL}\n\n`);
+      }
     }
   }
 
