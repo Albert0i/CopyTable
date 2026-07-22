@@ -9,6 +9,7 @@
     "insert": "node src/insertTable.js",
     "copy": "node src/copyTable.js",
     "replace": "node src/schemaReplace.js",
+    "hashes": "node src/buildHashes.js",
     "verify": "node src/verifyCopy.js",
     "mismatch": "node src/rowMismatch.js",
     "sql": "sqlite3 -init init.sql ./data/hash_tracker.db"

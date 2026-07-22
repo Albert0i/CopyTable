@@ -140,36 +140,3 @@ const mismatches = db.prepare(mismatchedHashesQuery).all();
 /*
    node src/rowMismatch.js
 */
-/*
-    // const rows = db.prepare(
-    //   `SELECT * FROM hash_tracker WHERE table_name=? AND hash_value=?`
-    // ).all(m.table_name, m.hash_value);
-
-    // for (const r of rows) {
-    //   const schema = r.schema_type === 'SOURCE' ? 'dcdevdta' : 'dcuatda';
-    //   const runner = r.schema_type === 'SOURCE' ? sourceRunner : targetRunner;
-    //   const table = r.table_name.toLowerCase();
-    //   const cols = r.common_columns;   // e.g. "MARSTS,MARSTD,..."
-    //   const offset = r.row_seq - 1;    // row_seq is 1-based
-
-    //   // Build SELECT
-    //   const selectSQL = `SELECT ${cols} FROM ${schema}.${table} OFFSET ${offset} ROWS FETCH FIRST 1 ROWS ONLY`;
-
-    //   // Execute against Oracle
-    //   const result = await runner.runSelectSQL(selectSQL);
-    //   if (!result.success || result.rows.length === 0) {
-    //     logStream.write(`-- Failed to fetch row for hash_value=${r.hash_value} (${result.message})\n`);
-    //     continue;
-    //   }
-
-    //   // Convert row into INSERT
-    //   const values = result.rows[0].map(v =>
-    //     v === null ? 'NULL' : `'${String(v).replace(/'/g, "''")}'`
-    //   ).join(',');
-    //   const insertSQL = `INSERT INTO ${schema}.${table} (${cols}) VALUES (${values});`;
-
-      // Log with comment
-      //logStream.write(`-- Mismatch hash_value=${r.hash_value} from ${r.schema_type} schema\n`);
-      //logStream.write(`${insertSQL}\n`);
-    //}
-*/
