@@ -131,6 +131,11 @@ const mismatches = db.prepare(mismatchedHashesQuery).all();
         logStream.write(`${insertSQL}\n\n`);
       }
     }
+
+    // Print a dot for each completed hash
+    //process.stdout.write('.');
+    // Print progress to console
+    console.log(`✔ Processed hash: ${m.hash_value}`);
   }
 
   logStream.end();
