@@ -8,6 +8,7 @@
 
 #### Prologue 
 
+
 #### 
 
 #### 
@@ -23,6 +24,8 @@
 #### 
 
 #### Bibliography 
+1. [DBeaver Documentatin Task Management](https://dbeaver.com/docs/dbeaver/Task-Management/)
+
 
 #### Epilogue 
 > "Death is a liberation because to die is to need no one. In death the wretched slave is forcibly set free from his pleasures, from his sufferings, from his coveted and ongoing life."
