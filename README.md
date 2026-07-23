@@ -25,6 +25,9 @@
 #### Bibliography 
 
 #### Epilogue 
+> "Death is a liberation because to die is to need no one. In death the wretched slave is forcibly set free from his pleasures, from his sufferings, from his coveted and ongoing life."
+
+> "A morte é uma libertação porque morrer é não precisar de outrem. O pobre escravo vê-se livre à força dos seus prazeres, das suas mágoas, da sua vida desejada e contínua."
 
 
 ### EOF (2026/xx/xx)
