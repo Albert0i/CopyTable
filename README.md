@@ -58,16 +58,98 @@ Here is my main concern:
 
 
 #### III. CopyTable via DumpTable and InsertTable 
+```
+node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate
+```
+
+```
+ node src/insertTable.js data
+```
+
 
 #### IV. CopyTable 
+```
+node src/copyTable.js DCDEVDTA DCUATDTA csr.txt truncate
+```
+
 
 #### V. buildHashes 
+```
+CREATE TABLE IF NOT EXISTS hash_tracker (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  schema_name    TEXT NOT NULL,        -- actual schema name, e.g. DCDEVDTA
+  schema_type    TEXT NOT NULL,        -- 'SOURCE' or 'TARGET'
+  table_name     TEXT NOT NULL,        -- table being hashed
+  common_columns TEXT,                 -- list of columns used for hashing
+  row_seq        INTEGER NOT NULL,     -- starts at 1 for each table
+  hash_value     TEXT NOT NULL,        -- computed fingerprint of row content
+  created_at     DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_hash_tracker_schema_table
+  ON hash_tracker(schema_name, table_name, row_seq);
+
+CREATE INDEX IF NOT EXISTS idx_hash_tracker_hash
+  ON hash_tracker(hash_value);
+```
+
+```
+node src/buildHashes.js DCDEVDTA DCUATDTA csr.txt
+```
+
 
 #### VI. verifyTable
+```
+-- Per-table row count comparison
+SELECT table_name,
+       MAX(CASE WHEN schema_type='SOURCE' THEN cnt END) AS source_rows,
+       MAX(CASE WHEN schema_type='TARGET' THEN cnt END) AS target_rows
+FROM (
+    SELECT table_name, schema_type, COUNT(*) AS cnt
+    FROM hash_tracker
+    GROUP BY table_name, schema_type
+) t
+GROUP BY table_name
+HAVING source_rows != target_rows;
+
+-- Per-table hash distribution comparison Summary
+SELECT table_name
+FROM (
+    SELECT table_name,
+           hash_value,
+           SUM(CASE WHEN schema_type='SOURCE' THEN 1 ELSE 0 END) AS source_count,
+           SUM(CASE WHEN schema_type='TARGET' THEN 1 ELSE 0 END) AS target_count
+    FROM   hash_tracker
+    GROUP BY table_name, hash_value
+    HAVING source_count != target_count
+) sub
+GROUP BY table_name
+ORDER BY table_name;
+
+-- Per-table hash distribution comparison
+SELECT table_name,
+       hash_value,
+       SUM(CASE WHEN schema_type='SOURCE' THEN 1 ELSE 0 END) AS source_count,
+       SUM(CASE WHEN schema_type='TARGET' THEN 1 ELSE 0 END) AS target_count
+FROM   hash_tracker
+GROUP BY table_name, hash_value
+HAVING source_count != target_count
+ORDER BY table_name, hash_value;
+```
+
+```
+node src/verifyCopy.js
+```
+
 
 #### VII. rowMismatch 
+```
+node src/rowMismatch.js
+```
+
 
 #### VIII. Summary 
+
 
 #### Bibliography 
 1. [DBeaver Task Management](https://dbeaver.com/docs/dbeaver/Task-Management/)
