@@ -45,6 +45,9 @@ HAVING source_count != target_count
 ORDER BY table_name, hash_value;
 `;
 
+/*
+   main
+*/
 // Run queries and print results
 console.log("\n=== Tables with Different Row Count ===");
 db.prepare(rowCountQuery).all().forEach(row => {

@@ -76,28 +76,6 @@ async function getColumns(runner, schema, table) {
   return result.success ? normalizeColumns(result.rows) : [];
 }
 
-// Compute hash from row values
-// function computeHash(row, commonCols) {
-//   const vals = commonCols.map(c => row[c] ?? 'NULL');
-//   return crypto.createHash('md5')
-//     .update(vals.join('|'))
-//     .digest('hex');
-// }
-// Normalize values for hashing (no SQL sanitization)
-// function normalizeForHash(val) {
-//   if (val === null || val === undefined) return '';
-//   if (typeof val === 'number') return val.toString();
-//   if (val instanceof Date) return val.toISOString();
-//   return String(val); // no trim, no forced space
-// }
-
-// Compute hash from row values
-// function computeHash(row, commonCols) {
-//   const vals = commonCols.map(c => normalizeForHash(row[c]));
-//   return crypto.createHash('md5')
-//     .update(vals.join('|'))
-//     .digest('hex');
-// }
 // Convert JS values into SQL-safe literals (NULL, numbers, dates, strings)
 function formatValue(val) {
   if (val === null || val === undefined) return 'NULL';

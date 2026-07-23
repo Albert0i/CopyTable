@@ -65,6 +65,9 @@ function formatValue(val) {
 
 const mismatches = db.prepare(mismatchedHashesQuery).all();
 
+/*
+   main
+*/
 (async () => {
   for (const m of mismatches) {
     // Source Schema 
