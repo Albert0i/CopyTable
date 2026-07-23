@@ -74,6 +74,10 @@ node src/copyTable.js DCDEVDTA DCUATDTA csr.txt truncate
 
 
 #### V. buildHashes 
+> When a database remains unchanged, selecting from a table without an `ORDER BY` clause often appears to return rows in their “arrival sequence,” typically reflecting insertion order or clustered index layout. This behavior can seem stable and repeatable, giving the impression of determinism.
+
+> However, SQL standards do not guarantee row order unless explicitly defined, and internal operations such as index rebuilds, statistics updates, or storage reorganizations may alter the sequence unexpectedly. Thus, while the output may look consistent in an untouched database, practitioners should treat it as incidental rather than deterministic, and enforce ordering when reliability is required.
+
 ```
 CREATE TABLE IF NOT EXISTS hash_tracker (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
