@@ -67,7 +67,7 @@ const mismatches = db.prepare(mismatchedHashesQuery).all();
 
 (async () => {
   for (const m of mismatches) {
-    // Source 
+    // Source Schema 
     if (m.source_count !== 0) {
       // Get full detail from hash_tracker    
       const details = db.prepare(
@@ -99,7 +99,7 @@ const mismatches = db.prepare(mismatchedHashesQuery).all();
         logStream.write(`${insertSQL}\n\n`);
       }
     }
-    // Target
+    // Target Schema
     if (m.target_count !== 0) {
       // Get full detail from hash_tracker    
       const details = db.prepare(
@@ -138,8 +138,10 @@ const mismatches = db.prepare(mismatchedHashesQuery).all();
     console.log(`✔ Processed hash: ${m.hash_value}`);
   }
 
+  // End log and print summary
   logStream.end();
-  console.log(`Row mismatch log written to ${logFile}`);
+  // console.log(`Row mismatch log written to ${logFile}`);
+  console.log(`Row mismatch log written to ${logFile} — ${mismatches.length} hashes processed.`);
 })();
 
 /*

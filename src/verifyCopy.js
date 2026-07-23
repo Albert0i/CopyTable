@@ -57,10 +57,15 @@ db.prepare(hashSummaryQuery).all().forEach(row => {
 });
 
 console.log("\n=== Hash Mismatches Details ===");
+let lastTable = null;
 db.prepare(hashDetailQuery).all().forEach(row => {
+  // If table_name changes, print a blank line
+  if (lastTable !== null && lastTable !== row.table_name) {
+    console.log(''); // blank line
+  }
   console.log(`${row.table_name}|${row.hash_value}|${row.source_count}|${row.target_count}`);
+  lastTable = row.table_name;
 });
 
 // Close DB
 db.close();
-
