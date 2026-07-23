@@ -7,21 +7,58 @@
 
 
 #### Prologue 
+*Copying tables is easy for talkers but not for doers*. Database table looks like worksheet in Excel, and the copying is alike, many people thinks so... I was responsible for creating database tables and moving data betwixt and between. Here is my observation: 
+
+1. Some people prefers to add additional columns in `PROD` or other environments to keep track of the data; 
+2. Schemas on source and target database may not align properly;
+3. Foreign keys are used to enfore integrity and thus impedes erasing data; 
+4. Most data migrations are on on an ad hoc basis and can't be integrated with CI/CD. 
+
+I. [Task management](https://dbeaver.com/docs/dbeaver/Task-Management/)
+> Use tasks to save and reuse configurations for database tools like data transfer or import/export. Tasks help you automate routine actions and run them with one click. You can create tasks from tool wizards or from the main menu, group them in folders, and manage them in a dedicated view.
+
+> This feature is available in Community, Enterprise, and Ultimate editions only.
+
+![alt DBeaver-Database-Tasks](img/DBeaver-Database-Tasks.JPG)
+
+The problem with Tasks is when importing redacted data, some fields may trigger error like so: 
+
+![alt by-zero](img/by-zero.JPG)
+
+In this case, export in SQL source and load it on target database is the only solution. 
+
+> Alongside that, DBeaver provides **Common** tasks. They work with any supported database and cover typical cross-database workflows:
+
+| Task | Description |
+| --- | --- |
+| Composite task | Run multiple tasks as a single workflow. |
+| Data compare | Compare data between sources and review differences. |
+| Data export | Export data to files or external targets. |
+| Data import | Import data from files. |
+| Mock data | Generate test data. |
+| SQL Script | Execute one or more SQL scripts automatically. |
+| Schema changelog | Create a changelog for selected data containers. |
+| Schema compare | Compare database metadata between schemas or databases. |
+| Shell command | Run a shell command as part of a task. |
+
+Tasks can be scheduled or run from the command line. It is a indispensable tool on data migration. 
 
 
-#### 
+#### II. 
 
-#### 
+PROD → DEV → (Redact) → UAT 
 
-#### 
+#### III. 
 
-#### 
+#### IV. 
 
-#### 
+#### V. 
 
-#### 
+#### VI. 
 
-#### 
+#### VII.
+
+#### VIII. 
 
 #### Bibliography 
 1. [DBeaver Documentatin Task Management](https://dbeaver.com/docs/dbeaver/Task-Management/)
