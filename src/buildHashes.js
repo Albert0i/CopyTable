@@ -142,14 +142,10 @@ function formatDuration(ms) {
 
         for (const row of result.rows) {
           const hash = computeHash(row, commonCols);
-        //   db.prepare(
-        //     `INSERT INTO hash_tracker (schema_name, table_name, common_columns, row_seq, hash_value)
-        //      VALUES (?, ?, ?, ?, ?)`
-        //   ).run('SOURCE', table, commonCols.join(','), rowSeq++, hash);
-        db.prepare(`
-        INSERT INTO hash_tracker (schema_name, schema_type, table_name, common_columns, row_seq, hash_value)
-        VALUES (?, ?, ?, ?, ?, ?)
-        `).run(sourceSchema, 'SOURCE', table, commonCols.join(','), rowSeq++, hash);
+          db.prepare(`
+          INSERT INTO hash_tracker (schema_name, schema_type, table_name, common_columns, row_seq, hash_value)
+          VALUES (?, ?, ?, ?, ?, ?)
+          `).run(sourceSchema, 'SOURCE', table, commonCols.join(','), rowSeq++, hash);
         
           sourceCount++;
         }
@@ -170,14 +166,10 @@ function formatDuration(ms) {
 
         for (const row of result.rows) {
           const hash = computeHash(row, commonCols);
-        //   db.prepare(
-        //     `INSERT INTO hash_tracker (schema_name, table_name, common_columns, row_seq, hash_value)
-        //      VALUES (?, ?, ?, ?, ?)`
-        //   ).run('TARGET', table, commonCols.join(','), rowSeq++, hash);
-        db.prepare(`
-        INSERT INTO hash_tracker (schema_name, schema_type, table_name, common_columns, row_seq, hash_value)
-        VALUES (?, ?, ?, ?, ?, ?)
-        `).run(targetSchema, 'TARGET', table, commonCols.join(','), rowSeq++, hash);
+          db.prepare(`
+          INSERT INTO hash_tracker (schema_name, schema_type, table_name, common_columns, row_seq, hash_value)
+          VALUES (?, ?, ?, ?, ?, ?)
+          `).run(targetSchema, 'TARGET', table, commonCols.join(','), rowSeq++, hash);
 
           targetCount++;
         }
