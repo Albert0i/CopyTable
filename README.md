@@ -51,10 +51,10 @@ Following is a general workflow involved in moving data from production to UAT:
 PROD → DEV → (Redact) → UAT 
 ```
 Here is my main concern: 
-- Error detection: identify which table which row has incurred the failure; 
-- Failure retry: *partially* re-do, not undo and redo; 
-- Target verify: ensure identity; 
-- Optimize copy: identify which table has changed since last copy and copy fewer tables on next round; 
+- **Error detection**: identify which table which row has incurred the failure; 
+- **Failure retry**: *partially* re-do, not undo and redo; 
+- **Target verify**: ensure identity; 
+- **Optimize copy**: identify which tables have been changed since last copy and only copy them again on next round; 
 
 
 #### III. CopyTable via DumpTable and InsertTable 
