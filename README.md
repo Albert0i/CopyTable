@@ -14,7 +14,8 @@
 3. Foreign keys are used to enfore integrity and thus impedes erasing data; 
 4. Most data migrations are on on an ad hoc basis and can't be integrated with CI/CD. 
 
-#### I. [Task management](https://dbeaver.com/docs/dbeaver/Task-Management/)
+
+#### I. [DBeaver Task management](https://dbeaver.com/docs/dbeaver/Task-Management/)
 > Use tasks to save and reuse configurations for database tools like data transfer or import/export. Tasks help you automate routine actions and run them with one click. You can create tasks from tool wizards or from the main menu, group them in folders, and manage them in a dedicated view.
 
 > This feature is available in Community, Enterprise, and Ultimate editions only.
@@ -44,25 +45,35 @@ In this case, export in SQL source and load it on target database is the only so
 Tasks can be scheduled or run from the command line. It is a indispensable tool on data migration. 
 
 
-#### II. 
-
+#### II. The workflow 
+Following is a general workflow involved in moving data from production to UAT: 
+```
 PROD → DEV → (Redact) → UAT 
+```
+Here is my main concern: 
+- Error detection: identify which table which row has incurred the failure; 
+- Failure retry: *partially* re-do, not undo and redo; 
+- Target verify: ensure identity; 
+- Optimize copy: identify which table has changed since last copy and copy fewer tables on next round; 
 
-#### III. 
 
-#### IV. 
+#### III. CopyTable via DumpTable and InsertTable 
 
-#### V. 
+#### IV. CopyTable 
 
-#### VI. 
+#### V. buildHashes 
 
-#### VII.
+#### VI. verifyTable
 
-#### VIII. 
+#### VII. rowMismatch 
+
+#### VIII. Summary 
 
 #### Bibliography 
-1. [DBeaver Documentatin Task Management](https://dbeaver.com/docs/dbeaver/Task-Management/)
-
+1. [DBeaver Task Management](https://dbeaver.com/docs/dbeaver/Task-Management/)
+2. [Introduction to Oracle Data Redaction](https://docs.oracle.com/en/database/oracle/oracle-database/19/asoag/introduction-to-oracle-data-redaction.html)
+3. [The Book of Disquiet by Fernando Pessoa](https://dn720004.ca.archive.org/0/items/english-collections-1/Book%20of%20Disquiet%2C%20The%20-%20Fernando%20Pessoa.pdf)
+ 
 
 #### Epilogue 
 > "Death is a liberation because to die is to need no one. In death the wretched slave is forcibly set free from his pleasures, from his sufferings, from his coveted and ongoing life."
