@@ -1,4 +1,19 @@
-### 
+### CopyTable - 
+
+#### Prologue 
+#### 
+#### 
+#### 
+#### 
+#### 
+#### 
+#### 
+#### Bibliography 
+#### Epilogue 
+
+
+### EOF (2026/xx/xx)
+
 
 #### 📂 Source schema: `DCDEVDTA.CUSTOMERS`
 ```
