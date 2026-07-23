@@ -57,17 +57,20 @@ Here is my main concern:
 - **Optimize copy**: identify which tables have been changed since last copy and only copy them again on next round; 
 
 
-#### III. CopyTable via DumpTable and InsertTable 
+#### III. CopyTable via DumpTable and InsertTable
+To dump all tables enlisted on `files.txt` into `./data` folder, source schema is `DCDEVDTA`, target schema is `DCUATDTA`. 
 ```
 node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate
 ```
 
+To run all dumped SQL statements on `./data` folder. 
 ```
  node src/insertTable.js data
 ```
 
 
-#### IV. CopyTable 
+#### IV. CopyTable
+To copy all tables enlisted on `files.txt`, source schema is `DCDEVDTA`, target schema is `DCUATDTA`, optionally `TRUNCATE` target table before copy. 
 ```
 node src/copyTable.js DCDEVDTA DCUATDTA csr.txt truncate
 ```
@@ -97,8 +100,10 @@ CREATE INDEX IF NOT EXISTS idx_hash_tracker_hash
   ON hash_tracker(hash_value);
 ```
 
+To build hashes on all tables enlisted on `files.txt`, source schema is `DCDEVDTA`, target schema is `DCUATDTA`. 
+
 ```
-node src/buildHashes.js DCDEVDTA DCUATDTA csr.txt
+node src/buildHashes.js DCDEVDTA DCUATDTA files.txt
 ```
 
 
@@ -141,12 +146,14 @@ HAVING source_count != target_count
 ORDER BY table_name, hash_value;
 ```
 
+To verify the hashes on all tables. 
 ```
 node src/verifyCopy.js
 ```
 
 
 #### VII. rowMismatch 
+To find out mismatch rows all tables and output to `/logs` folder. 
 ```
 node src/rowMismatch.js
 ```
