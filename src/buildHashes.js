@@ -129,7 +129,7 @@ function formatDuration(ms) {
 
       // Source schema rows
       let offset = 0;
-      let rowSeq = 1;
+      let sourceRowSeq = 1;
       const batchSize = 1000;
       while (true) {
         const sql = `
@@ -145,7 +145,7 @@ function formatDuration(ms) {
           db.prepare(`
           INSERT INTO hash_tracker (schema_name, schema_type, table_name, common_columns, row_seq, hash_value)
           VALUES (?, ?, ?, ?, ?, ?)
-          `).run(sourceSchema, 'SOURCE', table, commonCols.join(','), rowSeq++, hash);
+          `).run(sourceSchema, 'SOURCE', table, commonCols.join(','), sourceRowSeq++, hash);
         
           sourceCount++;
         }
@@ -154,7 +154,7 @@ function formatDuration(ms) {
 
       // Target schema rows
       offset = 0;
-      rowSeq = 1;
+      let targetRowSeq = 1;
       while (true) {
         const sql = `
           SELECT ${commonCols.join(', ')}
@@ -169,14 +169,14 @@ function formatDuration(ms) {
           db.prepare(`
           INSERT INTO hash_tracker (schema_name, schema_type, table_name, common_columns, row_seq, hash_value)
           VALUES (?, ?, ?, ?, ?, ?)
-          `).run(targetSchema, 'TARGET', table, commonCols.join(','), rowSeq++, hash);
+          `).run(targetSchema, 'TARGET', table, commonCols.join(','), targetRowSeq++, hash);
 
           targetCount++;
         }
         offset += batchSize;
       }
 
-      console.log(`✔️ Hashed ${table}: SOURCE rows=${rowSeq-1}, TARGET rows=${rowSeq-1}`);
+      console.log(`✔️ Hashed ${table}: SOURCE rows=${sourceRowSeq-1}, TARGET rows=${targetRowSeq-1}`);
     } catch (err) {
       console.error(`❌ Failed to hash ${table}: ${err.message}`);
     }
