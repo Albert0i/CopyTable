@@ -119,9 +119,11 @@ Example:
 #### V. BuildHashes
 *Copying tables is tedious; verifying them is pure drudgery.* The point is: how can you be so sure that all data are identical? Judging from the rows count is not enough, how can you read out and verify them without knowing the primary key beforehand, if any... 
 
-**ASSUMPTION**
+**MY ASSUMPTION**
 
 if the storage of source and target tables unchanged, querying the table without specifying `ORDER BY` gives the deterministic result! 
+
+My idea is simple: an RDBMS always completes your query with minimal effort — least CPU, least I/O, least RAM — and delivers whatever the result to the user as quickly as possible. It is a mean guy and reluctant to spend extra resources to fulfill your request. 
 
 **WARNINGS FROM AI**
 
