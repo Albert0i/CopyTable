@@ -116,7 +116,15 @@ Example:
 `copyTable.js` is a composite of `dumpTable.js` and `insertTable.js` without leave SQL dump files. The same read logic as `dumpTable.js` and the same write logic as `insertTable.js`, it is a cleaner approach if your sole purpose is copying tables. 
 
 
-#### V. buildHashes 
+#### V. BuildHashes
+*Copying tables is tedious; verifying them is pure drudgery.* The point is: how can you be so sure that all data are identical? Judging from the rows count is not enough, how can you read out and verify them without knowing what's their primary key, if any... 
+
+**ASSUMPTION**
+
+if the storage of source and target tables unchanged, querying the table without specifying `ORDER BY` gives the deterministic result! 
+
+**WARNINGS FROM AI**
+
 > When a database remains unchanged, selecting from a table without an `ORDER BY` clause often appears to return rows in their “arrival sequence,” typically reflecting insertion order or clustered index layout. This behavior can seem stable and repeatable, giving the impression of determinism.
 
 > However, SQL standards do not guarantee row order unless explicitly defined, and internal operations such as index rebuilds, statistics updates, or storage reorganizations may alter the sequence unexpectedly. Thus, while the output may look consistent in an untouched database, practitioners should treat it as incidental rather than deterministic, and enforce ordering when reliability is required.
