@@ -135,6 +135,11 @@ My idea is simple: an RDBMS always completes your query with minimal effort — 
 
 ![alt Copilot_20260724_132038.png](img/Copilot_20260724_132038.png)
 
+The use of hash to verify identity is common practice on internet download. 
+
+First of all, we calculate hashes for common columns of all rows on all tables on both sides. By grouping and counting hash value, we can effectively partition all rows into hash segments, if one hash segment has the same row count  on both sides, it is supposed this segment is identical; if the other hash segment has different count, ie. abs(source_count - target_count) = n for example, that hash segment has n rows changes. 
+
+To keep both sides intact, we use SQLite to store hashes:
 ```
 CREATE TABLE IF NOT EXISTS hash_tracker (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -155,13 +160,15 @@ CREATE INDEX IF NOT EXISTS idx_hash_tracker_hash
 ```
 
 To build hashes on all tables enlisted on `files.txt`, source schema is `DCDEVDTA`, target schema is `DCUATDTA`. 
+To build hashes on all tables enlisted on `files.txt` with source database and target database.
 
 ```
 node src/buildHashes.js DCDEVDTA DCUATDTA files.txt
 ```
 
 
-#### VI. verifyTable
+#### VI. VerifyTable
+Based on the hashes, we can verify rows count on both sides. 
 ```
 -- Per-table row count comparison
 SELECT table_name,
@@ -174,7 +181,10 @@ FROM (
 ) t
 GROUP BY table_name
 HAVING source_rows != target_rows;
+```
 
+Next, the hash segment summary. 
+```
 -- Per-table hash distribution comparison Summary
 SELECT table_name
 FROM (
@@ -188,7 +198,10 @@ FROM (
 ) sub
 GROUP BY table_name
 ORDER BY table_name;
+```
 
+At last, the hash segment details. 
+```
 -- Per-table hash distribution comparison
 SELECT table_name,
        hash_value,
@@ -206,11 +219,13 @@ node src/verifyCopy.js
 ```
 
 
-#### VII. rowMismatch 
-To find out mismatch rows all tables and output to `/logs` folder. 
+#### VII. RowMismatch 
+To find out mismatch rows on tables of both sides. 
 ```
 node src/rowMismatch.js
 ```
+
+Check the output on `/logs` folder. 
 
 
 #### VIII. Summary 
