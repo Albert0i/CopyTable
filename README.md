@@ -233,7 +233,13 @@ To find out mismatch rows on tables of both sides.
 node src/rowMismatch.js
 ```
 
+![alt rowMismatch-1](img/rowMismatch-1.JPG)
+
+![alt rowMismatch-2](img/rowMismatch-2.JPG)
+
 Check the output on `/logs` folder. 
+
+![alt misMatchLog](img/misMatchLog.JPG)
 
 
 #### VIII. Summary 
