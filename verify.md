@@ -1,5 +1,7 @@
 # Designing a Robust Verification Process for Copy Tracking in Large‑Scale Data Migration
 
+![alt Copilot_20260723_105020](img/Copilot_20260723_105020.png)
+
 ## 🌅 Introduction
 
 Data migration is one of the most delicate operations in enterprise computing. It is not enough to simply move data from one system to another; the integrity of that data must be **proven**. In large‑scale migrations, where millions or even billions of rows are transferred across heterogeneous systems, the risk of silent corruption, missing records, or mismatched values is significant.  

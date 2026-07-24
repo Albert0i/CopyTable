@@ -233,7 +233,7 @@ node src/rowMismatch.js
 > "A morte é uma libertação porque morrer é não precisar de outrem. O pobre escravo vê-se livre à força dos seus prazeres, das suas mágoas, da sua vida desejada e contínua."
 
 
-### EOF (2026/xx/xx)
+### EOF (2026/07/31)
 
 
 #### 📂 Source schema: `DCDEVDTA.CUSTOMERS`
@@ -318,4 +318,4 @@ INSERT INTO DCUATDTA.CUSTOMERS (NAME, PHONE, STATUS) VALUES ('Eva Lei', '853-999
 -- Records dumped: 5, Lines written: 9
 ```
 
-### EOF (2026/07/17)
+### EOF (2026/07/31)
