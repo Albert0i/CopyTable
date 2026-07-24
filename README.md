@@ -9,10 +9,10 @@
 #### Prologue 
 *Copying tables is easy for talkers but not for doers*. Database table looks like worksheet in Excel, and the copying is alike, many people thinks so... I was responsible for creating database tables and moving data betwixt and between. Here is my observation: 
 
-1. Some people prefers to add additional columns in `PROD` or other environments for monitoring purpose; 
-2. Schemas on source and target database may not align properly, `DEV` ;
-3. Foreign keys are used to enfore integrity and thus impedes erasing data; 
-4. Most data migrations are on on an ad hoc basis and can't be integrated with CI/CD. 
+1. Some people adds extra columns on tables for monitoring purpose; 
+2. Schemas may not align properly, either in name or type ;
+3. Foreign keys are used to enfore integrity which impedes erasing data; 
+4. Most data copying tools are on ad hoc basis and not systematic ways. 
 
 
 #### I. [DBeaver Task management](https://dbeaver.com/docs/dbeaver/Task-Management/)
@@ -22,11 +22,15 @@
 
 ![alt DBeaver-Database-Tasks](img/DBeaver-Database-Tasks.JPG)
 
-The problem with Tasks is when importing redacted data, some fields may trigger error like so: 
+Importing redacted data with Tasks may trigger error like so: 
 
 ![alt by-zero](img/by-zero.JPG)
 
-In this case, export in SQL source and load it on target database is the only solution. 
+Inserting redacted data with `INSERT` triggers error like so: 
+
+![alt the-command-references-a-redacted-object](img/the-command-references-a-redacted-object.JPG)
+
+The only way is to export tables in SQL source and load them into target database. 
 
 > Alongside that, DBeaver provides **Common** tasks. They work with any supported database and cover typical cross-database workflows:
 
@@ -42,37 +46,88 @@ In this case, export in SQL source and load it on target database is the only so
 | Schema compare | Compare database metadata between schemas or databases. |
 | Shell command | Run a shell command as part of a task. |
 
-Tasks can be scheduled or run from the command line. It is a indispensable tool on data migration. 
+**Tasks can be scheduled or executed from the command line. They are an indispensable tool for day‑to‑day data migration.
+**
 
-
-#### II. The workflow 
-Following is a general workflow involved in moving data from production to UAT: 
+#### II. A typical workflow 
+Following is a workflow involved in moving data from `PROD` to `UAT`, ie: 
 ```
 PROD → DEV → (Redact) → UAT 
 ```
 Here is my main concern: 
-- **Error detection**: identify which table which row has incurred the failure; 
-- **Failure retry**: *partially* re-do, not undo and redo; 
-- **Target verify**: ensure identity; 
+- **Error detection**: identify which table rows incur the failure; 
+- **Failure retry**: *partially* re-do, not total *undo* and *redo*; 
+- **Target verify**: ensure identity on both sides; 
 - **Optimize copy**: identify which tables have been changed since last copy and only copy them again on next round; 
+- **Observably**: when row changed dete3cted, what is the pair of rows looks like. 
 
 
-#### III. CopyTable via DumpTable and InsertTable
-To dump all tables enlisted on `files.txt` into `./data` folder, source schema is `DCDEVDTA`, target schema is `DCUATDTA`. 
+#### III. DumpTable and InsertTable
+To dump all tables enlisted on `files.txt` from source database into `./data` folder, optionally add `TRUNCATE` on top of `INSERT`.
 ```
-node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate
+Usage:
+  node src/dumpTable.js <source schema> <target schema> <files.txt> [truncate]
+
+Example:
+  node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate
 ```
 
-To run all dumped SQL statements on `./data` folder. 
+`dumpTable.js` would first get the columns name and type on both sides, compute the *common columns* which are supposed to hve the same name and type (`CHAR` and `VARCHAR2` are considered the same), in addition all managerial fields are stripped off. 
+
+And then, It queries source database in batch, format, compose and output SQL INSERT like so: 
 ```
- node src/insertTable.js data
+        for (const row of result.rows) {
+          const vals = commonCols.map(c => {
+                  let v = formatValue(row[c]);
+                  // 🔧 sanitize embedded linebreaks
+                  if (typeof v === 'string') {
+                    v = v.replace(/\r?\n/g, ' '); // replace newline with space
+                  }
+                  return v;
+                }).join(', ');
+          const insertSQL = `INSERT INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${vals});\n`;
+          writeStream.write(insertSQL);
+          rowCount++;
+        }
 ```
+
+```
+        for (const row of result.rows) {
+          //const vals = commonCols.map(c => formatValue(row[c])).join(', ');
+          const vals = commonCols.map(c => {
+                  let v = formatValue(row[c]);
+                  // 🔧 sanitize embedded linebreaks
+                  if (typeof v === 'string') {
+                    v = v.replace(/\r?\n/g, ' '); // replace newline with space
+                  }
+                  return v;
+                }).join(', ');
+          const insertSQL = `INSERT INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${vals});\n`;
+          writeStream.write(insertSQL);
+          rowCount++;
+        }
+```
+
+To insert SQL dumps into target database.
+```
+Usage:
+  node src/insertTable.js <sourceFolder>
+
+Example:
+  node src/insertTable.js H:\\UAT
+```
+
+The implementation of `insertTable.js` is straightforward, reads and runs, writes failure log if come accors error. You can run `insertTable.js` with any folder parameter, in this way, you can reuse the SQL dumps created by DBeaver. 
 
 
 #### IV. CopyTable
-To copy all tables enlisted on `files.txt`, source schema is `DCDEVDTA`, target schema is `DCUATDTA`, optionally `TRUNCATE` target table before copy. 
+To copy all tables enlisted on `files.txt` from source database into target database, optionally truncate target table before insert. 
 ```
-node src/copyTable.js DCDEVDTA DCUATDTA csr.txt truncate
+Usage:
+  node src/copyTable.js <source schema> <target schema> <files.txt> [truncate]
+
+Example:
+  node src/copyTable.js DCDEVDTA DCUATDTA files.txt truncate
 ```
 
 
