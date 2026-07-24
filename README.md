@@ -72,28 +72,11 @@ Example:
   node src/dumpTable.js DCDEVDTA DCUATDTA files.txt truncate
 ```
 
-`dumpTable.js` would first get the columns name and type on both sides, compute the *common columns* which are supposed to hve the same name and type (`CHAR` and `VARCHAR2` are considered the same), in addition all managerial fields are stripped off. 
+`dumpTable.js` would first get the columns name and type on both sides, compute the *common columns* which are supposed to have the same name and type (`CHAR` and `VARCHAR2` are considered the same), in addition all managerial fields are stripped off. 
 
-And then, It queries source database in batch, format, compose and output SQL INSERT like so: 
+And then, It queries source database in batch mode, format, compose and output `INSERT` statement like so: 
 ```
         for (const row of result.rows) {
-          const vals = commonCols.map(c => {
-                  let v = formatValue(row[c]);
-                  // 🔧 sanitize embedded linebreaks
-                  if (typeof v === 'string') {
-                    v = v.replace(/\r?\n/g, ' '); // replace newline with space
-                  }
-                  return v;
-                }).join(', ');
-          const insertSQL = `INSERT INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${vals});\n`;
-          writeStream.write(insertSQL);
-          rowCount++;
-        }
-```
-
-```
-        for (const row of result.rows) {
-          //const vals = commonCols.map(c => formatValue(row[c])).join(', ');
           const vals = commonCols.map(c => {
                   let v = formatValue(row[c]);
                   // 🔧 sanitize embedded linebreaks
@@ -129,6 +112,8 @@ Usage:
 Example:
   node src/copyTable.js DCDEVDTA DCUATDTA files.txt truncate
 ```
+
+`copyTable.js` is a composite of `dumpTable.js` and `insertTable.js` without leave SQL dump files. The same read logic as `dumpTable.js` and the same write logic as `insertTable.js`, it is a cleaner approach if your sole purpose is copying tables. 
 
 
 #### V. buildHashes 
