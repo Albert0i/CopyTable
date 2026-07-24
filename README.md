@@ -117,7 +117,7 @@ Example:
 
 
 #### V. BuildHashes
-*Copying tables is tedious; verifying them is pure drudgery.* The point is: how can you be so sure that all data are identical? Judging from the rows count is not enough, how can you read out and verify them without knowing what's their primary key, if any... 
+*Copying tables is tedious; verifying them is pure drudgery.* The point is: how can you be so sure that all data are identical? Judging from the rows count is not enough, how can you read out and verify them without knowing the primary key beforehand, if any... 
 
 **ASSUMPTION**
 
