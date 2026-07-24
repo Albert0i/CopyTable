@@ -9,8 +9,8 @@
 #### Prologue 
 *Copying tables is easy for talkers but not for doers*. Database table looks like worksheet in Excel, and the copying is alike, many people thinks so... I was responsible for creating database tables and moving data betwixt and between. Here is my observation: 
 
-1. Some people prefers to add additional columns in `PROD` or other environments to keep track of the data; 
-2. Schemas on source and target database may not align properly;
+1. Some people prefers to add additional columns in `PROD` or other environments for monitoring purpose; 
+2. Schemas on source and target database may not align properly, `DEV` ;
 3. Foreign keys are used to enfore integrity and thus impedes erasing data; 
 4. Most data migrations are on on an ad hoc basis and can't be integrated with CI/CD. 
 
@@ -160,6 +160,11 @@ node src/rowMismatch.js
 
 
 #### VIII. Summary 
+```
+```
+
+```
+```
 
 
 #### Bibliography 
