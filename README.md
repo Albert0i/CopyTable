@@ -166,6 +166,10 @@ To build hashes on all tables enlisted on `files.txt` with source database and t
 node src/buildHashes.js DCDEVDTA DCUATDTA files.txt
 ```
 
+![alt buildHashes-1](img/buildHashes-1.JPG)
+
+![alt buildHashes-2](img/buildHashes-2.JPG)
+
 
 #### VI. VerifyTable
 Based on the hashes, we can verify rows count on both sides. 
@@ -217,6 +221,10 @@ To verify the hashes on all tables.
 ```
 node src/verifyCopy.js
 ```
+
+![alt verifyCopy-1](img/verifyCopy-1.JPG)
+
+![alt verifyCopy-2](img/verifyCopy-2.JPG)
 
 
 #### VII. RowMismatch 
