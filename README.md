@@ -123,13 +123,17 @@ Example:
 
 if the storage of source and target tables unchanged, querying the table without specifying `ORDER BY` gives the deterministic result! 
 
-My idea is simple: an RDBMS always completes your query with minimal effort — least CPU, least I/O, least RAM — and delivers whatever the result to the user as quickly as possible. It is a mean guy and reluctant to spend extra resources to fulfill your request. 
+My idea is simple: an RDBMS always completes your query with minimal effort — least CPU, least I/O, least RAM — and delivers whatever the result to the user as quickly as possible. He is a mean guy and reluctant to spend extra resources to fulfill your request! He never spends a single extra penny on you!
+
+![alt Copilot_20260724_131627](img/Copilot_20260724_131627.png)
 
 **WARNINGS FROM AI**
 
 > When a database remains unchanged, selecting from a table without an `ORDER BY` clause often appears to return rows in their “arrival sequence,” typically reflecting insertion order or clustered index layout. This behavior can seem stable and repeatable, giving the impression of determinism.
 
 > However, SQL standards do not guarantee row order unless explicitly defined, and internal operations such as index rebuilds, statistics updates, or storage reorganizations may alter the sequence unexpectedly. Thus, while the output may look consistent in an untouched database, practitioners should treat it as incidental rather than deterministic, and enforce ordering when reliability is required.
+
+![alt Copilot_20260724_132038.png](img/Copilot_20260724_132038.png)
 
 ```
 CREATE TABLE IF NOT EXISTS hash_tracker (
