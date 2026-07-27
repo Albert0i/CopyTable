@@ -275,13 +275,16 @@ Open `mismatch_2026-7-23-09-13-57.log` on `/logs` folder.
 ![alt misMatchLog](img/misMatchLog.JPG)
 
 
-#### VIII. Summary 
+#### VIII. RowMismatch (Explained)
+
+
+#### IX. Summary 
 The use of hashes to verify file integrity is common practice in internet downloads. The use of hashes to verity row identity is inspired by AI, while the use of `row_seq` to locate the actual changed rows is based on my understanding on database storage and data retrieval. It's not a 100% guarantee but happens to work in my case... It's a guess as well as a bet!
 
 ![alt Copilot_20260723_105020](img/Copilot_20260723_105020.png)
 
 
-#### IX. Bibliography 
+#### X. Bibliography 
 1. [DBeaver Task Management](https://dbeaver.com/docs/dbeaver/Task-Management/)
 2. [Introduction to Oracle Data Redaction](https://docs.oracle.com/en/database/oracle/oracle-database/19/asoag/introduction-to-oracle-data-redaction.html)
 3. [The Book of Disquiet by Fernando Pessoa](https://dn720004.ca.archive.org/0/items/english-collections-1/Book%20of%20Disquiet%2C%20The%20-%20Fernando%20Pessoa.pdf)
