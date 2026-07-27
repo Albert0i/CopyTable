@@ -279,7 +279,7 @@ Open `mismatch_2026-7-23-09-13-57.log` on `/logs` folder.
 
 
 #### IX. Summary 
-The use of hashes to verify file integrity is common practice in internet downloads. The use of hashes to verity row identity is inspired by AI, while the use of `row_seq` to locate the actual changed rows is based on my understanding on database storage and data retrieval. It's not a 100% guarantee but happens to work in my case... It's a guess as well as a bet!
+The use of hashes to verify file integrity is common practice in internet downloads. The use of hashes to verity row identity is inspired by AI, while the use of `row_seq` to locate the actual changed rows is based on my understanding on database storage and data retrieval. It's not a 100% guarantee but happens to work in my case... It's a guess and a bet!
 
 ![alt Copilot_20260723_105020](img/Copilot_20260723_105020.png)
 
