@@ -276,6 +276,22 @@ Open `mismatch_2026-7-23-09-13-57.log` on `/logs` folder.
 
 
 #### VIII. RowMismatch (Explained)
+For all hash segments, query `hash_tracker` again to get details:
+```
+SELECT schema_name, schema_type, table_name, common_columns, row_seq 
+FROM hash_tracker 
+WHERE table_name=<table_name> AND hash_value=<hash_value> 
+ORDER BY schema_name, table_name
+```
+
+For all segment details, query Oracle source/target schema: 
+```
+SELECT <common_columns>
+FROM <schema_name>.<table_name>
+OFFSET <row_seq> - 1 ROWS FETCH FIRST 1 ROWS ONLY
+```
+
+From a low‑level perspective, a database is essentially a colossal composite of data structures, I don't think RDBMS would ever tread on the land of **Probabilistic data structures**. During the stage of hash building, every row is read and assigned a `row_seq`, this very number is crucial for later retrieval provided that the row order remains **deterministic** and this is where my assumption lies. 
 
 
 #### IX. Summary 
