@@ -61,6 +61,27 @@ Here is my main concern:
 - **Optimize copy**: identify which tables have been changed since last copy and only copy them again on next round; 
 - **Observably**: when row changed dete3cted, what is the pair of rows looks like. 
 
+Let's get started! First thing first, clone the repository from [here](https://github.com/Albert0i/CopyTable/tree/main). Next, create an `.env` file like so: 
+```
+SOURCE_ORACLEDB_USER=<source user>
+SOURCE_ORACLEDB_PASSWORD=<source password>
+SOURCE_ORACLEDB_CONNECTIONSTRING=<source connection string>
+
+TARGET_ORACLEDB_USER=<target user>
+TARGET_ORACLEDB_PASSWORD=<target password>
+TARGET_ORACLEDB_CONNECTIONSTRING=<target connection string>
+
+DATABASE=./data/hash_tracker.db
+```
+ And then, test connection with: 
+ ```
+ npm test 
+ ```
+
+![alt testConn](img/testConn.JPG)
+
+Warning: Setting the wrong direction could be a live-long lesson. 
+
 
 #### III. DumpTable and InsertTable
 To dump all tables enlisted on `files.txt` from source database into `./data` folder, optionally add `TRUNCATE` on top of `INSERT`.
