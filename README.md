@@ -261,7 +261,7 @@ The previous screens show:
 
 
 #### VII. RowMismatch 
-*Detecting rows changed is challenging, identifying the exact changed rows is the greater challenge.*To find out mismatch rows on tables of both sides. 
+*Detecting rows changed is challenging, identifying the exact changed rows is the greater challenge.* To find out mismatch rows on tables of both sides. 
 ```
 node src/rowMismatch.js
 ```
