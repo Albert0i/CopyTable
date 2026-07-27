@@ -83,7 +83,7 @@ npm test
 
 ![alt testConn](img/testConn.JPG)
 
-**Warning**: Setting the wrong direction could be a disaster. 
+**Warning**: Setting the wrong direction may cause a disaster. 
 
 
 #### III. DumpTable and InsertTable
