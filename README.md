@@ -141,11 +141,14 @@ Example:
 
 
 #### V. BuildHashes
-*Copying tables is tedious; verifying them is pure drudgery.* The point is: how can you be so sure that all data are identical? Judging from the rows count is not enough, how can you read out and verify them without knowing the primary key beforehand, if any... 
+*Copying tables is tedious; verifying them is pure drudgery.* My observation is: 
+- How can you be so sure that all data are identical? 
+- Simply judging from the rows count is not enough; 
+- How can you read out and verify rows without knowing the primary key (if any) beforehand?
 
 **MY ASSUMPTION**
 
-if the storage of source and target tables unchanged, querying the table without specifying `ORDER BY` gives the deterministic result! 
+if the storage of source and target tables unchanged, querying the table without specifying `ORDER BY` gives the *deterministic* result! 
 
 My idea is simple: an RDBMS always completes your query with minimal effort — least CPU, least I/O, least RAM — and delivers whatever the result to the user as quickly as possible. He is a mean guy and reluctant to spend extra resources to fulfill your request! He never spends a single extra penny on you!
 
@@ -159,11 +162,12 @@ My idea is simple: an RDBMS always completes your query with minimal effort — 
 
 ![alt Copilot_20260724_132038.png](img/Copilot_20260724_132038.png)
 
-The use of hash to verify identity is common practice on internet download. 
+We calculate hashes for common columns of all rows on all tables on both sides. By grouping and counting hash value, we can effectively partition all rows into **hash segments**: 
+- If one hash segment has the same row count on both sides, it is supposed that this segment is identical; 
+- If the other hash segment has different row count, ie. abs(source_count - target_count) ≠ 0, for example, that hash segment has at least one rows changes; 
+- If all hash segments have the same rows count, then both side are identical. 
 
-First of all, we calculate hashes for common columns of all rows on all tables on both sides. By grouping and counting hash value, we can effectively partition all rows into hash segments, if one hash segment has the same row count  on both sides, it is supposed this segment is identical; if the other hash segment has different count, ie. abs(source_count - target_count) = n for example, that hash segment has n rows changes. 
-
-To keep both sides intact, we use SQLite to store hashes:
+We use SQLite to store hashes of both sides (as you may know SQLite is my best friend):
 ```
 CREATE TABLE IF NOT EXISTS hash_tracker (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -267,6 +271,7 @@ Check the output on `/logs` folder.
 
 
 #### VIII. Summary 
+The use of hash to verify identity is common practice on internet download. 
 ```
 ```
 
