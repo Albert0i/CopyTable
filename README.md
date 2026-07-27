@@ -61,7 +61,7 @@ Here is my main concern:
 - **Failure retry**: *partially* re-do, not total *undo* and *redo*; 
 - **Target verify**: ensure identity on both sides; 
 - **Optimize copy**: identify which tables have been changed since last copy and only copy them again on next round; 
-- **Observably**: when row changed dete3cted, what is the pair of rows looks like. 
+- **Observably**: when row changed detected, what is the pair of rows looks like. 
 
 Let's get started! First thing first, clone the repository from [here](https://github.com/Albert0i/CopyTable/tree/main). Next, create an `.env` file like so: 
 ```
@@ -75,10 +75,11 @@ TARGET_ORACLEDB_CONNECTIONSTRING=<target connection string>
 
 DATABASE=./data/hash_tracker.db
 ```
- And then, test connection with: 
- ```
- npm test 
- ```
+
+And then, test connection with: 
+```
+npm test 
+```
 
 ![alt testConn](img/testConn.JPG)
 
