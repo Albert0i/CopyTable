@@ -10,27 +10,19 @@
 *Copying tables is easy for talkers but not for doers*. Database table looks like worksheet in Excel, and the copying is alike, many people thinks so... I was responsible for creating database tables and moving data betwixt and between. Here is my observation: 
 
 1. Some people adds extra columns on tables for monitoring purpose; 
-2. Schemas may not align properly, either in name or type ;
+2. Schemas may not align properly, either in *name* or *type*;
 3. Foreign keys are used to enfore integrity which impedes erasing data; 
 4. Most data copying tools are on ad hoc basis and not systematic ways. 
 
 
 #### I. [DBeaver Task management](https://dbeaver.com/docs/dbeaver/Task-Management/)
+Currently, the main tool to export/import tables between connections is **Task** in [DBeaver](https://dbeaver.io/). 
+
 > Use tasks to save and reuse configurations for database tools like data transfer or import/export. Tasks help you automate routine actions and run them with one click. You can create tasks from tool wizards or from the main menu, group them in folders, and manage them in a dedicated view.
 
 > This feature is available in Community, Enterprise, and Ultimate editions only.
 
 ![alt DBeaver-Database-Tasks](img/DBeaver-Database-Tasks.JPG)
-
-Importing redacted data with Tasks may trigger error like so: 
-
-![alt by-zero](img/by-zero.JPG)
-
-Inserting redacted data with `INSERT` triggers error like so: 
-
-![alt the-command-references-a-redacted-object](img/the-command-references-a-redacted-object.JPG)
-
-The only way is to export tables in SQL source and load them into target database. 
 
 > Alongside that, DBeaver provides **Common** tasks. They work with any supported database and cover typical cross-database workflows:
 
@@ -48,6 +40,17 @@ The only way is to export tables in SQL source and load them into target databas
 
 **Tasks can be scheduled or executed from the command line. They are an indispensable tool for day‑to‑day data migration.
 **
+
+However, importing redacted data with Tasks may trigger error like so: 
+
+![alt by-zero](img/by-zero.JPG)
+
+Inserting redacted data with `INSERT` triggers error like so: 
+
+![alt the-command-references-a-redacted-object](img/the-command-references-a-redacted-object.JPG)
+
+The only way is to export tables in SQL source and load them into target database. 
+
 
 #### II. A typical workflow 
 Following is a workflow involved in moving data from `PROD` to `UAT`, ie: 
