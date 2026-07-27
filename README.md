@@ -276,7 +276,8 @@ Open `mismatch_2026-7-23-09-13-57.log` on `/logs` folder.
 
 
 #### VIII. Summary 
-The use of hash to verify identity is common practice on internet download. 
+The use of hashes to verify file integrity is common practice in internet downloads. The use of hashes to verity row identify is inspired by AI; the use of `row_seq` to locate the actual row changed. 
+
 ```
 ```
 
