@@ -38,8 +38,7 @@ Currently, the main tool to export/import tables between connections is **Task**
 | Schema compare | Compare database metadata between schemas or databases. |
 | Shell command | Run a shell command as part of a task. |
 
-**Tasks can be scheduled or executed from the command line. They are an indispensable tool for day‑to‑day data migration.
-**
+**Tasks can be scheduled or executed from the command line. They are an indispensable tool for day‑to‑day data migration.**
 
 However, importing redacted data with Tasks may trigger error like so: 
 
