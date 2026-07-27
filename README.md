@@ -270,7 +270,7 @@ node src/rowMismatch.js
 
 ![alt rowMismatch-2](img/rowMismatch-2.JPG)
 
-Check the output on `/logs` folder. 
+Open `mismatch_2026-7-23-09-13-57.log` on `/logs` folder. 
 
 ![alt misMatchLog](img/misMatchLog.JPG)
 
