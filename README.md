@@ -252,6 +252,11 @@ node src/verifyCopy.js
 
 ![alt verifyCopy-1](img/verifyCopy-1.JPG)
 
+The previous screens show: 
+1. `MEMSOC` and `RSUNITR` have different rows counts; 
+2. `TBMARSTS` and `TBTYPCOD` have at least one row changed; 
+3. All hash segments with `source_count` not equal to `target_count`; 
+
 ![alt verifyCopy-2](img/verifyCopy-2.JPG)
 
 
