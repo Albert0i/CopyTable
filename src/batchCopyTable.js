@@ -122,7 +122,10 @@ function formatValue(val) {
       const srcCols = await getColumns(sourceRunner, sourceSchema, table);
       const tgtCols = await getColumns(targetRunner, targetSchema, table);
 
+      // Create a Map of target columns keyed by column_name with data_type as value
       const tgtMap = new Map(tgtCols.map(c => [c.column_name, c.data_type]));
+
+      // Build list of source columns that exist in target with identical data types
       const commonCols = srcCols.filter(c =>
         tgtMap.has(c.column_name) && tgtMap.get(c.column_name) === c.data_type
       ).map(c => c.column_name);
@@ -157,32 +160,85 @@ function formatValue(val) {
         }
         if (result.rows.length === 0) break;
 
-        // Build individual INSERT statements
-        const insertStatements = result.rows.map(row => {
+        // for (const row of result.rows) {
+        //   const vals = commonCols.map(c => formatValue(row[c])).join(', ');
+        //   const insertSQL = `INSERT INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${vals})`;
+        //   try {
+        //     const insResult = await targetRunner.runSQL([insertSQL]);
+        //     if (insResult.success) {
+        //       console.log(`✅ SUCCESS: ${table} [row ${rowCount+1}]`);
+        //       successCount++;
+        //     } else {
+        //       console.error(`❌ FAILURE: ${table} [row ${rowCount+1}] → ${insResult.message}`);
+        //       await fs.promises.appendFile(logFile, insertSQL + ";\n");
+        //       failureCount++;
+        //     }
+        //   } catch (err) {
+        //     console.error(`❌ FAILURE: ${table} [row ${rowCount+1}] → ${err.message}`);
+        //     await fs.promises.appendFile(logFile, insertSQL + ";\n");
+        //     failureCount++;
+        //   }
+        //   rowCount++;
+        // }
+        let buffer = [];
+        let batchStart = rowCount + 1;
+
+        for (const row of result.rows) {
           const vals = commonCols.map(c => formatValue(row[c])).join(', ');
-          return `INSERT INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${vals});`;
-        });
+          buffer.push(`INSERT INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${vals})`);
+          rowCount++;
 
-        // Concatenate them into one batch string
-        const batchSQL = insertStatements.join('\n');
-
-        try {
-          const insResult = await targetRunner.runSQL([batchSQL]);
-          if (insResult.success) {
-            console.log(`✅ SUCCESS: ${table} [row ${rowCount+1}~${rowCount+result.rows.length}]`);
-            successCount += result.rows.length;
-          } else {
-            console.error(`❌ FAILURE: ${table} [row ${rowCount+1}~${rowCount+result.rows.length}] → ${insResult.message}`);
-            await fs.promises.appendFile(logFile, batchSQL + "\n");
-            failureCount += result.rows.length;
+          // When buffer reaches batchSize, flush it
+          if (buffer.length === batchSize) {
+            //const batchSQL = buffer.join('\n');
+            try {
+              //const insResult = await targetRunner.runSQL([batchSQL]);
+              const insResult = await targetRunner.runSQL(buffer);
+              if (insResult.success) {
+                console.log(`✅ SUCCESS: ${table} [row ${batchStart}~${rowCount}]`);
+                successCount += buffer.length;
+              } else {
+                console.error(`❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${insResult.message}`);
+                //await fs.promises.appendFile(logFile, batchSQL + "\n");
+                await fs.promises.appendFile(logFile, `❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${insResult.message}` + "\n");
+                failureCount += buffer.length;
+              }
+            } catch (err) {
+              console.error(`❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${err.message}`);
+              //await fs.promises.appendFile(logFile, batchSQL + "\n");
+              await fs.promises.appendFile(logFile, `❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${err.message}` + "\n");
+              failureCount += buffer.length;
+            }
+            buffer = [];
+            batchStart = rowCount + 1;
           }
-        } catch (err) {
-          console.error(`❌ FAILURE: ${table} [row ${rowCount+1}~${rowCount+result.rows.length}] → ${err.message}`);
-          await fs.promises.appendFile(logFile, batchSQL + "\n");
-          failureCount += result.rows.length;
         }
 
-        rowCount += result.rows.length;
+        // Flush any remaining statements in buffer (less than batchSize)
+        if (buffer.length > 0) {
+          //const batchSQL = buffer.join('');          
+          //console.log('batchSQL =', batchSQL)
+          try {
+            //const insResult = await targetRunner.runSQL([batchSQL]);
+            const insResult = await targetRunner.runSQL(buffer);
+            if (insResult.success) {
+              console.log(`✅ SUCCESS: ${table} [row ${batchStart}~${rowCount}]`);
+              successCount += buffer.length;
+            } else {
+              console.error(`❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${insResult.message}`);
+              //await fs.promises.appendFile(logFile, batchSQL + "\n");
+              await fs.promises.appendFile(logFile, `❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${insResult.message}` + "\n");
+              failureCount += buffer.length;
+            }
+          } catch (err) {
+            console.error(`❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${err.message}`);
+            //await fs.promises.appendFile(logFile, batchSQL + "\n");
+            await fs.promises.appendFile(logFile, `❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${err.message}` + "\n");
+            failureCount += buffer.length;
+          }
+        }
+
+
         offset += batchSize;
       }
 
@@ -211,5 +267,5 @@ function formatValue(val) {
 })();
 
 /*
-   node src/batchCopyTable.js DCDEVDTA DCUATDTA csr.txt truncate
+   node src/batchCopyTable.js DCDEVDTA DCUATDTA rg3.txt truncate
 */
