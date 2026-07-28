@@ -139,6 +139,15 @@ Example:
 
 `copyTable.js` is a composite of `dumpTable.js` and `insertTable.js` without leave SQL dump files. The same read logic as `dumpTable.js` and the same write logic as `insertTable.js`, it is a cleaner approach if your sole purpose is copying tables. 
 
+Alternatively, `batchCopyTable.js` does pretty much the same thing using batch insert, which is faster but loses the ability to track failure on individual row insert. 
+```
+Usage:
+  node src/batchCopyTable.js <source schema> <target schema> <files.txt> [truncate]
+
+Example:
+  node src/batchCopyTable.js DCDEVDTA DCUATDTA files.txt truncate
+```
+
 
 #### V. BuildHashes
 *Copying tables is tedious; verifying them is pure drudgery.* My observation is: 
