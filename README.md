@@ -148,6 +148,8 @@ Example:
   node src/batchCopyTable.js DCDEVDTA DCUATDTA files.txt truncate
 ```
 
+![alt Copilot_20260728_154149](img/Copilot_20260728_154149.png)
+
 
 #### V. BuildHashes
 *Copying tables is tedious; verifying them is pure drudgery.* My observation is: 
