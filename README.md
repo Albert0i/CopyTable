@@ -259,6 +259,29 @@ The previous screens show:
 2. `TBMARSTS` and `TBTYPCOD` have at least one row changed; 
 3. All hash segments with `source_count` not equal to `target_count`; 
 
+Oftentimes, you need to reset `UAT` data, go ahead to re-build the hashes and re-verify with: 
+```
+node src/buildHashes.js DCDEVDTA DCUATDTA csr.txt
+node src/verifyCopy.js
+```
+
+![alt verifyCopy-3](img/verifyCopy-3.JPG)
+
+Create a `reset.txt` and put those four table names there: 
+```
+MEMSOC
+PATFLT
+TBMARSTS
+TBTYPCOD
+```
+
+Then, re-copy those tables: 
+```
+node src/copyTable.js DCDEVDTA DCUATDTA reset.txt truncate
+```
+
+After that, build hashes and verify again until both sides become identical. 
+
 
 #### VII. RowMismatch 
 *Detecting rows changed is challenging, identifying the actual changed rows is a greater challenge.* To find out mismatch rows on tables of both sides. 
