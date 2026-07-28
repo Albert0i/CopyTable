@@ -70,11 +70,12 @@ let filesProcessed = 0;
 let successCount = 0;
 let failureCount = 0;
 
-// Normalize Oracle column metadata
+// Normalize Oracle column metadata, unifying CHAR/VARCHAR2 and excluding OGG_ columns
 function normalizeColumns(rows) {
   return rows
     .map(r => {
       let dt = r.DATA_TYPE.trim().toUpperCase();
+      // Treat CHAR and VARCHAR2 as the same
       if (dt === 'CHAR') dt = 'VARCHAR2';
       return {
         column_name: r.COLUMN_NAME.trim().toUpperCase(),
@@ -84,6 +85,7 @@ function normalizeColumns(rows) {
     .filter(c => !c.column_name.startsWith("OGG_"));
 }
 
+// Retrieve column metadata for a given schema/table and types
 async function getColumns(runner, schema, table) {
   const sql = `
     SELECT column_name, data_type
@@ -96,6 +98,7 @@ async function getColumns(runner, schema, table) {
   return result.success ? normalizeColumns(result.rows) : [];
 }
 
+// Convert JS values into SQL-safe literals (NULL, numbers, dates, strings)
 function formatValue(val) {
   if (val === null || val === undefined) return 'NULL';
   if (typeof val === 'number') return val.toString();
@@ -160,26 +163,6 @@ function formatValue(val) {
         }
         if (result.rows.length === 0) break;
 
-        // for (const row of result.rows) {
-        //   const vals = commonCols.map(c => formatValue(row[c])).join(', ');
-        //   const insertSQL = `INSERT INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${vals})`;
-        //   try {
-        //     const insResult = await targetRunner.runSQL([insertSQL]);
-        //     if (insResult.success) {
-        //       console.log(`✅ SUCCESS: ${table} [row ${rowCount+1}]`);
-        //       successCount++;
-        //     } else {
-        //       console.error(`❌ FAILURE: ${table} [row ${rowCount+1}] → ${insResult.message}`);
-        //       await fs.promises.appendFile(logFile, insertSQL + ";\n");
-        //       failureCount++;
-        //     }
-        //   } catch (err) {
-        //     console.error(`❌ FAILURE: ${table} [row ${rowCount+1}] → ${err.message}`);
-        //     await fs.promises.appendFile(logFile, insertSQL + ";\n");
-        //     failureCount++;
-        //   }
-        //   rowCount++;
-        // }
         let buffer = [];
         let batchStart = rowCount + 1;
 
@@ -190,22 +173,18 @@ function formatValue(val) {
 
           // When buffer reaches batchSize, flush it
           if (buffer.length === batchSize) {
-            //const batchSQL = buffer.join('\n');
             try {
-              //const insResult = await targetRunner.runSQL([batchSQL]);
               const insResult = await targetRunner.runSQL(buffer);
               if (insResult.success) {
                 console.log(`✅ SUCCESS: ${table} [row ${batchStart}~${rowCount}]`);
                 successCount += buffer.length;
               } else {
                 console.error(`❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${insResult.message}`);
-                //await fs.promises.appendFile(logFile, batchSQL + "\n");
                 await fs.promises.appendFile(logFile, `❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${insResult.message}` + "\n");
                 failureCount += buffer.length;
               }
             } catch (err) {
               console.error(`❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${err.message}`);
-              //await fs.promises.appendFile(logFile, batchSQL + "\n");
               await fs.promises.appendFile(logFile, `❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${err.message}` + "\n");
               failureCount += buffer.length;
             }
@@ -216,28 +195,22 @@ function formatValue(val) {
 
         // Flush any remaining statements in buffer (less than batchSize)
         if (buffer.length > 0) {
-          //const batchSQL = buffer.join('');          
-          //console.log('batchSQL =', batchSQL)
           try {
-            //const insResult = await targetRunner.runSQL([batchSQL]);
             const insResult = await targetRunner.runSQL(buffer);
             if (insResult.success) {
               console.log(`✅ SUCCESS: ${table} [row ${batchStart}~${rowCount}]`);
               successCount += buffer.length;
             } else {
               console.error(`❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${insResult.message}`);
-              //await fs.promises.appendFile(logFile, batchSQL + "\n");
               await fs.promises.appendFile(logFile, `❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${insResult.message}` + "\n");
               failureCount += buffer.length;
             }
           } catch (err) {
             console.error(`❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${err.message}`);
-            //await fs.promises.appendFile(logFile, batchSQL + "\n");
             await fs.promises.appendFile(logFile, `❌ FAILURE: ${table} [row ${batchStart}~${rowCount}] → ${err.message}` + "\n");
             failureCount += buffer.length;
           }
         }
-
 
         offset += batchSize;
       }
