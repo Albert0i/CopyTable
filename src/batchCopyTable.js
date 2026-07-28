@@ -75,7 +75,6 @@ function normalizeColumns(rows) {
   return rows
     .map(r => {
       let dt = r.DATA_TYPE.trim().toUpperCase();
-      // Treat CHAR and VARCHAR2 as the same
       if (dt === 'CHAR') dt = 'VARCHAR2';
       return {
         column_name: r.COLUMN_NAME.trim().toUpperCase(),
@@ -85,7 +84,6 @@ function normalizeColumns(rows) {
     .filter(c => !c.column_name.startsWith("OGG_"));
 }
 
-// Retrieve column metadata for a given schema/table and types
 async function getColumns(runner, schema, table) {
   const sql = `
     SELECT column_name, data_type
@@ -98,7 +96,6 @@ async function getColumns(runner, schema, table) {
   return result.success ? normalizeColumns(result.rows) : [];
 }
 
-// Convert JS values into SQL-safe literals (NULL, numbers, dates, strings)
 function formatValue(val) {
   if (val === null || val === undefined) return 'NULL';
   if (typeof val === 'number') return val.toString();
@@ -107,7 +104,7 @@ function formatValue(val) {
   }
   let s = String(val).trim().replace(/'/g, "''");
   if (s === '') s = ' ';
-  return `'${s.replace(/\r?\n/g, ' ')}'`; // sanitize embedded linebreaks
+  return `'${s.replace(/\r?\n/g, ' ')}'`;
 }
 
 /*
@@ -125,10 +122,7 @@ function formatValue(val) {
       const srcCols = await getColumns(sourceRunner, sourceSchema, table);
       const tgtCols = await getColumns(targetRunner, targetSchema, table);
 
-      // Create a Map of target columns keyed by column_name with data_type as value
       const tgtMap = new Map(tgtCols.map(c => [c.column_name, c.data_type]));
-
-      // Build list of source columns that exist in target with identical data types
       const commonCols = srcCols.filter(c =>
         tgtMap.has(c.column_name) && tgtMap.get(c.column_name) === c.data_type
       ).map(c => c.column_name);
@@ -163,29 +157,28 @@ function formatValue(val) {
         }
         if (result.rows.length === 0) break;
 
-        const valuesList = result.rows.map(row =>
-          `INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${commonCols.map(c => formatValue(row[c])).join(', ')})`
-        );
+        // Build individual INSERT statements
+        const insertStatements = result.rows.map(row => {
+          const vals = commonCols.map(c => formatValue(row[c])).join(', ');
+          return `INSERT INTO ${targetSchema}.${table} (${commonCols.join(', ')}) VALUES (${vals});`;
+        });
 
-        const insertSQL = `
-          INSERT ALL
-          ${valuesList.join('\n')}
-          SELECT * FROM dual
-        `;
+        // Concatenate them into one batch string
+        const batchSQL = insertStatements.join('\n');
 
         try {
-          const insResult = await targetRunner.runSQL([insertSQL]);
+          const insResult = await targetRunner.runSQL([batchSQL]);
           if (insResult.success) {
             console.log(`✅ SUCCESS: ${table} [row ${rowCount+1}~${rowCount+result.rows.length}]`);
             successCount += result.rows.length;
           } else {
             console.error(`❌ FAILURE: ${table} [row ${rowCount+1}~${rowCount+result.rows.length}] → ${insResult.message}`);
-            await fs.promises.appendFile(logFile, insertSQL + ";\n");
+            await fs.promises.appendFile(logFile, batchSQL + "\n");
             failureCount += result.rows.length;
           }
         } catch (err) {
           console.error(`❌ FAILURE: ${table} [row ${rowCount+1}~${rowCount+result.rows.length}] → ${err.message}`);
-          await fs.promises.appendFile(logFile, insertSQL + ";\n");
+          await fs.promises.appendFile(logFile, batchSQL + "\n");
           failureCount += result.rows.length;
         }
 
