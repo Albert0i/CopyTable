@@ -5,10 +5,12 @@ import fs from 'fs';
 import path from 'path';
 
 function showUsage() {
-  console.error(`Usage: 
+  console.error(`
+    Usage: 
       node src/schemaReplace.js <folder> <fromSchema> <toSchema>
 
-      Example: node src/schemaReplace.js "H:\\\\UAT" DCWRKDTA DCUATDTA`);
+    Example: 
+      node src/schemaReplace.js "H:\\\\UAT" DCWRKDTA DCUATDTA`);
 }
 
 function main() {

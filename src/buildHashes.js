@@ -18,7 +18,7 @@ if (!rawSourceSchema || !rawTargetSchema || !manifestFile) {
       node src/buildHashes.js <source schema> <target schema> <files.txt>
 
     Example: 
-        node src/buildHashes.js DCDEVDTA DCUATDTA files.txt`);
+      node src/buildHashes.js DCDEVDTA DCUATDTA files.txt`);
   process.exit(1);
 }
 
