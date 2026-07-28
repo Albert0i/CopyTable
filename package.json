@@ -1,6 +1,6 @@
 {
   "name": "copytable",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "dump": "node src/dumpTable.js",
     "insert": "node src/insertTable.js",
     "copy": "node src/copyTable.js",
+    "batch": "node src/batchCopyTable.js",
     "replace": "node src/schemaReplace.js",
     "hashes": "node src/buildHashes.js",
     "verify": "node src/verifyCopy.js",
