@@ -148,13 +148,14 @@ function formatValue(val) {
       let rowCount = 0;
       let offset = 0;
       // const batchSize = 1000;
-      const batchSize = parseInt(process.env.READ_BATCH_SIZE || '1000', 10);
+      const readBatchSize = parseInt(process.env.READ_BATCH_SIZE || '1000', 10);
+      const writeBatchSize = parseInt(process.env.WRITE_BATCH_SIZE || '1000', 10);
 
       while (true) {
         const sql = `
           SELECT ${commonCols.join(', ')}
           FROM   ${sourceSchema}.${table}
-          OFFSET ${offset} ROWS FETCH NEXT ${batchSize} ROWS ONLY
+          OFFSET ${offset} ROWS FETCH NEXT ${readBatchSize} ROWS ONLY
         `;
         const result = await sourceRunner.runSelectSQL(sql);
         if (!result.success) {
@@ -173,7 +174,7 @@ function formatValue(val) {
           rowCount++;
 
           // When buffer reaches batchSize, flush it
-          if (buffer.length === batchSize) {
+          if (buffer.length === writeBatchSize) {
             try {
               const insResult = await targetRunner.runSQL(buffer);
               if (insResult.success) {
@@ -213,7 +214,7 @@ function formatValue(val) {
           }
         }
 
-        offset += batchSize;
+        offset += readBatchSize;
       }
 
       console.log(`✔️ Copied ${rowCount} rows from ${sourceSchema}.${table} to ${targetSchema}.${table}`);
