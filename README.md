@@ -74,6 +74,10 @@ TARGET_ORACLEDB_PASSWORD=<target password>
 TARGET_ORACLEDB_CONNECTIONSTRING=<target connection string>
 
 DATABASE=./data/hash_tracker.db
+DB_FAST_MODE=true
+
+READ_BATCH_SIZE=5000
+WRITE_BATCH_SIZE=2000
 ```
 
 And then, test connection with: 
