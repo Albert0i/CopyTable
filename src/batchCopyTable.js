@@ -147,7 +147,8 @@ function formatValue(val) {
 
       let rowCount = 0;
       let offset = 0;
-      const batchSize = 1000;
+      // const batchSize = 1000;
+      const batchSize = parseInt(process.env.READ_BATCH_SIZE || '1000', 10);
 
       while (true) {
         const sql = `

@@ -130,7 +130,9 @@ function formatDuration(ms) {
       // Source schema rows
       let offset = 0;
       let sourceRowSeq = 1;
-      const batchSize = 1000;
+      // const batchSize = 1000;
+      const batchSize = parseInt(process.env.READ_BATCH_SIZE || '1000', 10);
+
       while (true) {
         const sql = `
           SELECT ${commonCols.join(', ')}
