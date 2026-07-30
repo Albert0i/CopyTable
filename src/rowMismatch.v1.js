@@ -49,7 +49,7 @@ SELECT table_name,
 FROM   hash_tracker
 GROUP BY table_name, hash_value
 HAVING source_count != target_count
-ORDER BY table_name, hash_value
+ORDER BY table_name, hash_value;
 `;
 
 function formatValue(val) {
@@ -63,21 +63,13 @@ function formatValue(val) {
   return `'${s}'`;
 }
 
+const mismatches = db.prepare(mismatchedHashesQuery).all();
+
 /*
    main
 */
-const readBatchSize = parseInt(process.env.READ_BATCH_SIZE || '1000', 10);
-
-let offset = 0;
-let processedCount = 0;
-const startTime = new Date();
-
-while (true) {
-  const mismatches = db.prepare(`${mismatchedHashesQuery} LIMIT ? OFFSET ?`).all(readBatchSize, offset);
-  if (mismatches.length === 0) break; // no more rows
-
+(async () => {
   for (const m of mismatches) {
-    // … your existing SOURCE/TARGET logic …
     // Source Schema 
     if (m.source_count !== 0) {
       // Get full detail from hash_tracker    
@@ -142,24 +134,18 @@ while (true) {
         logStream.write(`${insertSQL}\n\n`);
       }
     }
-    // … your existing SOURCE/TARGET logic …
-    processedCount++;
+
+    // Print a dot for each completed hash
+    //process.stdout.write('.');
+    // Print progress to console
     console.log(`✔ Processed hash: ${m.hash_value}`);
   }
 
-  offset += readBatchSize; // move to next batch
-}
-
-const endTime = new Date();
-const durationSec = Math.round((endTime - startTime) / 1000);
-
-logStream.end();
-console.log(`Row mismatch log written to ${logFile}`);
-console.log(`Hashes processed: ${processedCount}`);
-console.log(`Start time: ${startTime.toLocaleString()}`);
-console.log(`End time:   ${endTime.toLocaleString()}`);
-console.log(`Duration:   ${durationSec} seconds`);
-console.log(`👉 Please check the log file for full INSERT statements.`);
+  // End log and print summary
+  logStream.end();
+  // console.log(`Row mismatch log written to ${logFile}`);
+  console.log(`Row mismatch log written to ${logFile} — ${mismatches.length} hashes processed.`);
+})();
 
 /*
    node src/rowMismatch.js

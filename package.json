@@ -1,6 +1,6 @@
 {
   "name": "copytable",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "copy": "node src/copyTable.js",
     "batch": "node src/batchCopyTable.js",
     "replace": "node src/schemaReplace.js",
-    "hashes": "node src/buildHashes.js",
+    "hash": "node src/buildHashes.js",
     "verify": "node src/verifyCopy.js",
     "mismatch": "node src/rowMismatch.js",
     "sql": "sqlite3 -init init.sql ./data/hash_tracker.db"
