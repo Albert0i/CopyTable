@@ -8,22 +8,6 @@ import { createRunner } from './yrunner.js';
 
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
-/* 
-  Extra environment parameters now available:
-
-  DATABASE=./data/hash_tracker.db
-    → Path to your SQLite database file.
-
-  DB_FAST_MODE=true
-    → Toggle for PRAGMA fast mode (unsafe but faster).
-
-  READ_BATCH_SIZE=6000
-    → Number of rows fetched from Oracle per query.
-
-  WRITE_BATCH_SIZE=2000
-    → Number of rows inserted into SQLite per transaction.
-*/
-
 const testConnection = async (label, config) => {
   const runner = createRunner(config);
   try {
@@ -53,14 +37,6 @@ const targetConfig = createDbConfig({
 });
 
 (async () => {
-  // Show Oracle connections
   await testConnection("SOURCE", sourceConfig);
   await testConnection("TARGET", targetConfig);
-
-  // Show new .env parameters
-  console.log()
-  console.log("SQLite DATABASE:", process.env.DATABASE);
-  console.log("DB_FAST_MODE:", process.env.DB_FAST_MODE);
-  console.log("READ_BATCH_SIZE:", process.env.READ_BATCH_SIZE || "1000 (default)");
-  console.log("WRITE_BATCH_SIZE:", process.env.WRITE_BATCH_SIZE || "1000 (default)");
 })();
