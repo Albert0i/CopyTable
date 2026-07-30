@@ -151,14 +151,20 @@ while (true) {
 }
 
 const endTime = new Date();
-const durationSec = Math.round((endTime - startTime) / 1000);
+//const durationSec = Math.round((endTime - startTime) / 1000);
+const durationMs = endTime - startTime;
+const hh = String(Math.floor(durationMs / 3600000)).padStart(2, '0');
+const mm = String(Math.floor((durationMs % 3600000) / 60000)).padStart(2, '0');
+const ss = String(Math.floor((durationMs % 60000) / 1000)).padStart(2, '0');
+const nnn = String(durationMs % 1000).padStart(3, '0');
 
 logStream.end();
 console.log(`Row mismatch log written to ${logFile}`);
 console.log(`Hashes processed: ${processedCount}`);
 console.log(`Start time: ${startTime.toLocaleString()}`);
 console.log(`End time:   ${endTime.toLocaleString()}`);
-console.log(`Duration:   ${durationSec} seconds`);
+//console.log(`Duration:   ${durationSec} seconds`);
+console.log(`Duration:   ${hh}:${mm}:${ss}:${nnn}`);
 console.log(`👉 Please check the log file for full INSERT statements.`);
 
 /*
