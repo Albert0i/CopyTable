@@ -48,6 +48,8 @@ ORDER BY table_name, hash_value;
 /*
    main
 */
+const startTime = new Date();
+
 // Run queries and print results
 console.log("\n=== Tables with Different Row Count ===");
 db.prepare(rowCountQuery).all().forEach(row => {
@@ -61,6 +63,7 @@ db.prepare(hashSummaryQuery).all().forEach(row => {
 
 console.log("\n=== Hash Mismatches Details ===");
 let lastTable = null;
+let numberOfMismatched = 0; 
 db.prepare(hashDetailQuery).all().forEach(row => {
   // If table_name changes, print a blank line
   if (lastTable !== null && lastTable !== row.table_name) {
@@ -68,7 +71,21 @@ db.prepare(hashDetailQuery).all().forEach(row => {
   }
   console.log(`${row.table_name}|${row.hash_value}|${row.source_count}|${row.target_count}`);
   lastTable = row.table_name;
+  numberOfMismatched += 1;
 });
+
+const endTime = new Date();
+const durationMs = endTime - startTime;
+const hh = String(Math.floor(durationMs / 3600000)).padStart(2, '0');
+const mm = String(Math.floor((durationMs % 3600000) / 60000)).padStart(2, '0');
+const ss = String(Math.floor((durationMs % 60000) / 1000)).padStart(2, '0');
+const nnn = String(durationMs % 1000).padStart(3, '0');
+
+console.log("\n=== SUMMARY ===");
+console.log(`Number of mismatched: ${numberOfMismatched}`);
+console.log(`Start time: ${startTime.toISOString()}`);
+console.log(`End time:   ${endTime.toISOString()}`);
+console.log(`Duration:   ${hh}:${mm}:${ss}:${nnn}`);
 
 // Close DB
 db.close();
