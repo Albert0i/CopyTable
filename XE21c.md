@@ -1,5 +1,6 @@
 ### 🛠️ Guide: Running and Verifying Oracle XE 21c in Docker
 
+![alt XE21c](img/Copilot_20260731_XE21c.png)
 
 #### 1. Run the Container
 Use your command:
